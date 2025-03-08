@@ -1,0 +1,15 @@
+<nav style="background: rgba(15, 52, 96, 0.95); padding: 15px; text-align: center; border-radius: 10px; width: 100vw;">
+    <a href="/" class="btn">בית</a> |
+    <a href="/search" class="btn">חיפוש</a> |
+
+    <% if (typeof user !== 'undefined' && user) { %>
+        <a href="/profile" class="btn">פרופיל</a> |
+        <a href="/auth/logout" class="btn">התנתקות</a>
+    <% } else { %>
+        <a href="/login" class="btn">התחברות</a> |
+        <a href="/register" class="btn">הרשמה</a>
+    <% } %>
+</nav>
+
+
+

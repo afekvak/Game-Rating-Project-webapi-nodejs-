@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+      <html lang="he">
+       <%- include('partials/head') %>
+      <body>
+          <%- include('partials/navbar') %>
+          <div class="container">
+              <% if (user) { %>
+                  <h2>👤 פרופיל משתמש</h2>
+                   <p>שם משתמש: <%= user.username %></p>
+                  <p>אימייל: <%= user.email %></p>
+              <% } else { %>
+                 <p>🔒 יש להתחבר כדי לצפות בפרופיל שלך. <a href="/login">התחבר</a></p>
+               <% } %>
+          </div>
+          <%- include('partials/footer') %>
+      </body>
+       </html>

@@ -1,0 +1,10 @@
+<%- include('partials/navbar') %>
+    <div class="container">
+        <h2>
+            <%= game.name %>
+        </h2>
+        <p>דירוג: <%= game.rating %>
+        </p>
+        <img src="<%= game.background_image %>" width="200">
+    </div>
+    <%- include('partials/footer') %>

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="he">
+<%- include('partials/head') %>
+
+    <body>
+        <%- include('partials/navbar') %>
+            <div class="container">
+                <h2>
+                    <%= game.name %>
+                </h2>
+                <p>ז'אנר: <%= game.genre %>
+                </p>
+                <p>דירוג ממוצע: <%= game.averageRating %>
+                </p>
+                <form action="/rate" method="POST">
+                    <input type="hidden" name="gameId" value="<%= game.id %>">
+                    <label>דרג את המשחק:</label>
+                    <select name="rating">
+                        <option value="1">⭐</option>
+                        <option value="2">⭐⭐</option>
+                        <option value="3">⭐⭐⭐</option>
+                        <option value="4">⭐⭐⭐⭐</option>
+                        <option value="5">⭐⭐⭐⭐⭐</option>
+                    </select>
+                    <button type="submit" class="btn">💾 שמור דירוג</button>
+                </form>
+            </div>
+            <%- include('partials/footer') %>
+    </body>
+
+</html>

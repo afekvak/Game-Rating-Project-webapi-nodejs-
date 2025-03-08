@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="he">
+<%- include('partials/head') %>
+
+    <body>
+        <%- include('partials/navbar') %>
+            <div class="container">
+                <h2>🌟 משחקים מומלצים עבורך</h2>
+                <div class="recommendations-list">
+                    <% recommendations.forEach(game=> { %>
+                        <div class="game-card">
+                            <h3>
+                                <%= game.name %>
+                            </h3>
+                            <p>ז'אנר: <%= game.genre %>
+                            </p>
+                            <a href="/game-info/<%= game.id %>" class="btn">📜 פרטי המשחק</a>
+                        </div>
+                        <% }) %>
+                </div>
+            </div>
+            <%- include('partials/footer') %>
+    </body>
+
+</html>

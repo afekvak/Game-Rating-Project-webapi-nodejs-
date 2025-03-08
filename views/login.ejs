@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+       <html lang="he">
+       <%- include('partials/head') %>
+       <body>
+           <%- include('partials/navbar') %>
+          <div class="container">
+               <h2>🔑 התחברות</h2>
+              <form action="/auth/login" method="POST">
+                  <input type="email" name="email" placeholder="אימייל" required>
+                  <input type="password" name="password" placeholder="סיסמה" required>
+                  <button type="submit" class="btn">🔓 התחבר</button>
+               </form>
+          </div>
+           <%- include('partials/footer') %>
+       </body>
+    </html>

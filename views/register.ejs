@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+      <html lang="he">
+      <%- include('partials/head') %>
+      <body>
+          <%- include('partials/navbar') %>
+          <div class="container">
+              <h2>📜 הרשמה</h2>
+               <form action="/auth/register" method="POST">
+                   <input type="text" name="username" placeholder="שם משתמש" required>
+                  <input type="email" name="email" placeholder="אימייל" required>
+                  <input type="password" name="password" placeholder="סיסמה" required>
+                  <button type="submit" class="btn">✅ הירשם</button>
+              </form>
+          </div>
+          <%- include('partials/footer') %>
+       </body>
+      </html>

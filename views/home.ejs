@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="he">
+<%- include('partials/head') %>
+
+  <body>
+    <%- include('partials/navbar') %>
+      <div class="container">
+        <h1>🎮 ברוכים הבאים!</h2>
+          <p>מערכת המלצות למשחקי מחשב מבוססת AI.</p>
+          <a href="/games/explore" class="btn">🕹️ Explore Games</a>
+
+
+          <% if (user) { %>
+            <a href="/profile" class="btn">🔹 הפרופיל שלי</a>
+            <a href="/recommendations" class="btn">🌟 Recommended for You</a>
+            <% } %>
+      </div>
+      <%- include('partials/footer') %>
+  </body>
+
+</html>
