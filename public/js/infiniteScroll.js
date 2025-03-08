@@ -20,11 +20,13 @@ document.addEventListener("DOMContentLoaded", () => {
             console.log(`🔄 Fetching page ${page}...`);
             const response = await fetch(`/games/explore?page=${page}`, {
                 headers: {
-                    'Accept': 'application/json'
+                    'Accept': 'application/json' // Ensure the server returns JSON
                 }
             });
+
             if (!response.ok) throw new Error("Failed to fetch");
-            const data = await response.json();
+
+            const data = await response.json(); // ✅ Ensure valid JSON
 
             if (!data.games || data.games.length === 0) {
                 console.log("⚠️ No more games to load.");
@@ -36,10 +38,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 const gameCard = document.createElement("div");
                 gameCard.classList.add("game-card");
                 gameCard.innerHTML = `
-                          <img src="${game.image}" alt="${game.name}">
-                       <h3>${game.name}</h3>
-                     <a href="/games/game-info/${game.id}" class="btn">📜 פרטי המשחק</a>
-                      `;
+                    <img src="${game.image}" alt="${game.name}">
+                    <h3>${game.name}</h3>
+                    <a href="/games/game-info/${game.id}" class="btn">📜 פרטי המשחק</a>
+                `;
                 gameGallery.appendChild(gameCard);
             });
 

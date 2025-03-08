@@ -3,35 +3,45 @@
     <%- include('partials/navbar') %>
 
     <div class="game-container">
-        <!-- ✅ Game Title at the Top -->
+        <!-- ✅ Back Button Adjusts Based on Referrer -->
+        <a href="<%= referer === 'home' ? '/' : '/games/explore' %>" class="back-btn">⬅ Back</a>
+
         <h1 class="game-title"><%= game.name %></h1>
 
-        <!-- ✅ Game Image -->
         <div class="game-image-container">
             <img src="<%= game.image %>" alt="<%= game.name %>" class="game-image">
         </div>
 
-        <!-- ✅ Game Description -->
         <div class="game-description">
-            <p><strong>🎮 ז'אנר:</strong> <%= game.genre %></p>
-            <p><strong>⭐ דירוג ממוצע:</strong> <%= game.averageRating %></p>
+            <p><strong>🎮 Genre:</strong> <%= game.genre %></p>
+            <p><strong>⭐ Average Rating:</strong> <%= game.averageRating %></p>
             <p><%= game.description %></p>
         </div>
 
-        <!-- ✅ Game Video Trailer (if available) -->
-        <% if (game.video) { %>
+        <% if (game.trailer) { %>
             <div class="game-video">
-                <h2>🎥 טריילר / גיימפליי</h2>
-                <video controls>
-                    <source src="<%= game.video %>" type="video/mp4">
-                    הדפדפן שלך לא תומך בהפעלת וידאו.
-                </video>
+                <h2>🎥 Trailer</h2>
+                <iframe width="100%" height="315" src="<%= game.trailer %>" frameborder="0" allowfullscreen></iframe>
+            </div>
+        <% } else { %>
+            <div class="game-video">
+                <h2>🎥 No Trailer Available</h2>
             </div>
         <% } %>
 
-        <!-- ✅ Rate the Game -->
+        <% if (game.gameplay) { %>
+            <div class="game-video">
+                <h2>🎮 Gameplay</h2>
+                <iframe width="100%" height="315" src="<%= game.gameplay %>" frameborder="0" allowfullscreen></iframe>
+            </div>
+        <% } else { %>
+            <div class="game-video">
+                <h2>🎮 No Gameplay Video Available</h2>
+            </div>
+        <% } %>
+
         <div class="game-rating">
-            <label for="rating">🌟 דרג את המשחק:</label>
+            <label for="rating">🌟 Rate the game:</label>
             <select id="rating">
                 <option value="1">⭐</option>
                 <option value="2">⭐⭐</option>
@@ -39,12 +49,11 @@
                 <option value="4">⭐⭐⭐⭐</option>
                 <option value="5">⭐⭐⭐⭐⭐</option>
             </select>
-            <button class="btn">💾 שמור דירוג</button>
+            <button class="btn">💾 Save Rating</button>
         </div>
 
-        <!-- ✅ Buy Game on Steam -->
-        <% if (game.steamLink) { %>
-            <p><a href="<%= game.steamLink %>" target="_blank" class="btn btn-buy">🛒 קנה ב-Steam</a></p>
+        <% if (game.stores) { %>
+            <p><a href="/games/<%= game.id %>/stores" class="btn btn-buy">🛒 Purchase Links</a></p>
         <% } %>
     </div>
 

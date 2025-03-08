@@ -1,21 +1,32 @@
-<!DOCTYPE html>
-<html lang="he">
 <%- include('partials/head') %>
-
-  <body>
+<body>
     <%- include('partials/navbar') %>
-      <div class="container">
-        <h1>🎮 ברוכים הבאים!</h2>
-          <p>מערכת המלצות למשחקי מחשב מבוססת AI.</p>
-          <a href="/games/explore" class="btn">🕹️ Explore Games</a>
 
+    <div class="container">
+        <h1>🎮 Welcome to AI Game Recommender</h1>
+        <p>Find the best games with AI-powered recommendations!</p>
+        <a href="/games/explore" class="btn">🕹️ Explore Games</a>
 
-          <% if (user) { %>
-            <a href="/profile" class="btn">🔹 הפרופיל שלי</a>
+        <% if (user) { %>
+            <a href="/profile" class="btn">🔹 My Profile</a>
             <a href="/recommendations" class="btn">🌟 Recommended for You</a>
-            <% } %>
-      </div>
-      <%- include('partials/footer') %>
-  </body>
+        <% } %>
 
+        <div class="top-games-section">
+            <h2>🔥 Most Popular Games</h2>
+            <div class="top-games-gallery">
+                <% popularGames.forEach(game => { %>
+                    <div class="top-game-card">
+                        <img src="<%= game.image %>" alt="<%= game.name %>">
+                        <h3><%= game.name %></h3>
+                        <p>⭐ Rating: <%= game.rating %></p>
+                        <a href="/games/game-info/<%= game.id %>" class="btn">📜 View Details</a>
+                    </div>
+                <% }) %>
+            </div>
+        </div>
+    </div>
+
+    <%- include('partials/footer') %>
+</body>
 </html>
