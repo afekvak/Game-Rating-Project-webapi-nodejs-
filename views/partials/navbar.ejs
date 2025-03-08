@@ -2,7 +2,7 @@
     <a href="/" class="btn">בית</a> |
     <a href="/search" class="btn">חיפוש</a> |
 
-    <% if (typeof user !== 'undefined' && user) { %>
+    <% if (user) { %>
         <a href="/profile" class="btn">פרופיל</a> |
         <a href="/auth/logout" class="btn">התנתקות</a>
     <% } else { %>
@@ -10,6 +10,7 @@
         <a href="/register" class="btn">הרשמה</a>
     <% } %>
 </nav>
+
 
 
 
