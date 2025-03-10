@@ -53,6 +53,8 @@ exports.getExploreGames = async (req, res) => {
 };
 
 
+const mongoose = require("mongoose");
+
 exports.getGameInfo = async (gameId, userId) => {
     try {
         const response = await axios.get(`https://api.rawg.io/api/games/${gameId}`, {
@@ -66,12 +68,10 @@ exports.getGameInfo = async (gameId, userId) => {
 
         const gameData = response.data;
 
-        // ✅ Fetch Trailer & Gameplay from YouTube
         console.log(`🔍 Fetching YouTube trailer and gameplay for "${gameData.name}"...`);
         const trailer = await fetchYouTubeVideo(gameData.name, "trailer");
         const gameplay = await fetchYouTubeVideo(gameData.name, "gameplay");
 
-        // ✅ Fetch Store Links
         const storeResponse = await axios.get(`https://api.rawg.io/api/games/${gameId}/stores`, {
             params: { key: RAWG_API_KEY }
         });
@@ -93,11 +93,45 @@ exports.getGameInfo = async (gameId, userId) => {
             stores: storeLinks.length > 0 ? storeLinks : null
         };
 
-        // ✅ Track Last Visited Games in MongoDB (if user is logged in)
-        if (userId) {
-            await User.findByIdAndUpdate(userId, {
-                $addToSet: { lastVisitedGames: game.id } // Prevents duplicates
-            }, { new: true });
+        // ✅ Log userId status
+        if (!userId) {
+            console.warn(`⚠️ No valid userId provided, skipping last viewed games update.`);
+            return game;
+        }
+
+        console.log(`🔄 Attempting to update last viewed games for user: ${userId}`);
+
+        // ✅ Ensure `userId` is a valid MongoDB ObjectId
+        if (!mongoose.Types.ObjectId.isValid(userId)) {
+            console.warn(`⚠️ Invalid userId: ${userId}, skipping last viewed games update.`);
+            return game;
+        }
+
+        // ✅ Find the user and update last viewed games
+        const user = await User.findById(userId);
+        if (user) {
+            console.log(`✅ User found: ${user.username}. Current last viewed games:`, user.lastVisitedGames);
+
+            let lastGames = user.lastVisitedGames || [];
+
+            // ✅ Remove duplicate game entries
+            lastGames = lastGames.filter(id => id !== game.id);
+
+            // ✅ Add the new game at the start
+            lastGames.unshift(game.id);
+
+            // ✅ Keep only the last 5 games
+            lastGames = lastGames.slice(0, 5);
+
+            const updatedUser = await User.findByIdAndUpdate(
+                userId,
+                { lastVisitedGames: lastGames },
+                { new: true }
+            );
+
+            console.log(`✅ Last viewed games updated for ${user.username}:`, updatedUser.lastVisitedGames);
+        } else {
+            console.warn(`⚠️ User not found in DB. Could not update last viewed games.`);
         }
 
         return game;
@@ -108,17 +142,24 @@ exports.getGameInfo = async (gameId, userId) => {
     }
 };
 
+
 exports.renderGameInfo = async (req, res) => {
     try {
         const referer = req.headers.referer;
-        let backPage = "explore"; // Default page
+        let backPage = "explore"; // Default back button page
 
         if (referer) {
             if (referer.endsWith("/")) backPage = "home";
             if (referer.includes("/games/explore")) backPage = "explore";
         }
 
-        const game = await exports.getGameInfo(req.params.id, req.user ? req.user._id : null);
+        // ✅ Ensure userId is extracted correctly
+        const userId = req.user && req.user.userId ? req.user.userId : null;
+
+        console.log(`🔄 User ${userId ? userId : "Guest"} is viewing game ID: ${req.params.id}`);
+
+        // ✅ Fetch game info and track last viewed games
+        const game = await exports.getGameInfo(req.params.id, userId);
 
         res.render('game-info', { game, referer: backPage });
 
@@ -127,6 +168,7 @@ exports.renderGameInfo = async (req, res) => {
         res.status(500).render('game-info', { game: null, referer: "explore" });
     }
 };
+
 
 
 exports.getGameStores = async (req, res) => {
