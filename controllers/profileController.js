@@ -74,6 +74,7 @@ exports.renderProfile = async (req, res) => {
     }
 };
 
+
 // ✅ Update Profile Picture
 exports.updateProfilePhoto = async (req, res) => {
     try {

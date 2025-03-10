@@ -335,10 +335,11 @@ h2 {
     text-align: center;
     max-width: 600px;
     margin: 50px auto;
-    background: rgba(22, 33, 62, 0.9);
+    background: rgba(22, 33, 62, 0.95);
     padding: 30px;
     border-radius: 15px;
-    box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.3);
+    box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.4);
+    animation: fadeIn 1s ease-in-out;
 }
 
 /* 🔎 Search Title */
@@ -354,9 +355,11 @@ h2 {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: black;
-    padding: 10px;
+    background: #0f3460;
+    padding: 12px;
     border-radius: 10px;
+    box-shadow: 0px 0px 10px rgba(0, 255, 255, 0.2);
+    transition: box-shadow 0.3s ease-in-out;
 }
 
 /* 🔠 Search Input */
@@ -364,51 +367,93 @@ h2 {
     width: 80%;
     padding: 12px;
     font-size: 1rem;
-    border: none;
+    border: 2px solid transparent;
     background: black;
     color: #f5a425;
     border-radius: 5px;
     outline: none;
+    transition: all 0.3s ease-in-out;
+}
+
+/* ✨ Glowing Effect on Focus */
+#searchInput:focus {
+    border-color: #f5a425;
+    box-shadow: 0px 0px 8px rgba(245, 164, 37, 0.7);
 }
 
 /* 🔍 Search Button */
 .search-btn {
-    background: #f5a425;
+    background: linear-gradient(135deg, #f5a425, #ffcc29);
     color: black;
     padding: 12px 15px;
     border: none;
-    border-radius: 5px;
-    font-size: 1rem;
+    border-radius: 8px;
+    font-size: 1.1rem;
     cursor: pointer;
     transition: background 0.3s, transform 0.2s;
+    margin-left: 10px;
 }
 
 .search-btn:hover {
-    background: #ffcc29;
-    transform: scale(1.05);
+    background: linear-gradient(135deg, #ffcc29, #f5a425);
+    transform: scale(1.1);
 }
 
-/* 🎇 Glowing Suggestions Box */
+/* 🎇 Enhanced Glowing Suggestions Box */
 .suggestions-list {
     list-style: none;
     padding: 0;
     margin: 10px auto;
-    background: rgba(0, 0, 0, 0.9);
+    background: rgba(0, 0, 0, 0.95);
     border-radius: 5px;
-    box-shadow: 0px 0px 10px rgba(245, 164, 37, 0.7);
-    max-width: 300px;
+    box-shadow: 0px 0px 12px rgba(0, 255, 255, 0.3);
+    max-width: 400px;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
 }
 
+/* 🎭 Make it Fade In */
+.suggestions-list.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* 🎯 Suggestions Items */
 .suggestions-list li {
-    padding: 10px;
+    padding: 12px;
     color: #f5a425;
     cursor: pointer;
-    transition: background 0.2s ease-in-out;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    transition: background 0.2s ease-in-out, transform 0.2s ease-in-out;
 }
 
+/* 🟡 Hover Effect */
 .suggestions-list li:hover {
-    background: #333;
+    background: rgba(255, 204, 41, 0.2);
+    transform: scale(1.05);
 }
+
+/* ❌ Error Message */
+.error-message {
+    color: red;
+    font-size: 1rem;
+    margin-top: 10px;
+}
+
+/* 🎭 Fade-In Animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
 
 /* ❌ Error Message */
 .error-message {
@@ -679,5 +724,150 @@ h2 {
 @media (max-width: 500px) {
     .recommendations-gallery {
         grid-template-columns: repeat(auto-fit, minmax(100%, 1fr)); /* Stacks in 1 column */
+    }
+}
+
+
+/* 🎨 Register Page Styles */
+.register-container {
+    max-width: 400px;
+    margin: 50px auto;
+    background: rgba(22, 33, 62, 0.95);
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    animation: fadeIn 1s ease-in-out;
+}
+
+/* 🏷️ Register Title */
+.register-container h2 {
+    color: #f5a425;
+    font-size: 2rem;
+    margin-bottom: 20px;
+    text-shadow: 0px 0px 10px rgba(245, 164, 37, 0.7);
+}
+
+/* 📝 Input Fields */
+.register-container input {
+    width: 90%;
+    padding: 12px;
+    margin: 10px 0;
+    font-size: 1rem;
+    border: 2px solid transparent;
+    border-radius: 10px;
+    background: #0f3460;
+    color: white;
+    outline: none;
+    transition: all 0.3s ease-in-out;
+}
+
+/* ✨ Glowing Effect on Focus */
+.register-container input:focus {
+    border-color: #f5a425;
+    box-shadow: 0px 0px 8px rgba(245, 164, 37, 0.7);
+}
+
+/* 🔘 Register Button */
+.register-container .btn {
+    width: 100%;
+    background: linear-gradient(135deg, #f5a425, #ffcc29);
+    color: #16213e;
+    padding: 12px;
+    border-radius: 10px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    transition: transform 0.2s ease-in-out, background 0.3s ease;
+    cursor: pointer;
+    margin-top: 15px;
+    border: none;
+}
+
+.register-container .btn:hover {
+    background: linear-gradient(135deg, #ffcc29, #f5a425);
+    transform: scale(1.05);
+}
+
+/* 🎭 Fade-In Animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* 🔐 Login Page Styles */
+.login-container {
+    max-width: 400px;
+    margin: 50px auto;
+    background: rgba(22, 33, 62, 0.95);
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    animation: fadeIn 1s ease-in-out;
+}
+
+/* 🏷️ Login Title */
+.login-container h2 {
+    color: #f5a425;
+    font-size: 2rem;
+    margin-bottom: 20px;
+    text-shadow: 0px 0px 10px rgba(245, 164, 37, 0.7);
+}
+
+/* 📝 Input Fields */
+.login-container input {
+    width: 90%;
+    padding: 12px;
+    margin: 10px 0;
+    font-size: 1rem;
+    border: 2px solid transparent;
+    border-radius: 10px;
+    background: #0f3460;
+    color: white;
+    outline: none;
+    transition: all 0.3s ease-in-out;
+}
+
+/* ✨ Glowing Effect on Focus */
+.login-container input:focus {
+    border-color: #f5a425;
+    box-shadow: 0px 0px 8px rgba(245, 164, 37, 0.7);
+}
+
+/* 🔘 Login Button */
+.login-container .btn {
+    width: 100%;
+    background: linear-gradient(135deg, #f5a425, #ffcc29);
+    color: #16213e;
+    padding: 12px;
+    border-radius: 10px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    transition: transform 0.2s ease-in-out, background 0.3s ease;
+    cursor: pointer;
+    margin-top: 15px;
+    border: none;
+}
+
+.login-container .btn:hover {
+    background: linear-gradient(135deg, #ffcc29, #f5a425);
+    transform: scale(1.05);
+}
+
+/* 🎭 Fade-In Animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
     }
 }

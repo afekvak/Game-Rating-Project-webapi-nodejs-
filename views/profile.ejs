@@ -31,10 +31,10 @@
                 <ul>
                     <% if (user.recentGames && user.recentGames.length > 0) { %>
                         <% user.recentGames.forEach(game => { %>
-                            <li>
+                            <li class="game-item">
                                 <a href="/games/game-info/<%= game.id %>">
-                                    <img src="<%= game.image %>">
-                                    <%= game.name %>
+                                    <img src="<%= game.image %>" class="game-image">
+                                    <span><%= game.name %></span>
                                 </a>
                             </li>
                         <% }); %>
@@ -51,20 +51,20 @@
                     <% if (ratings && ratings.length > 0) { %>
                         <% ratings.forEach(rating => { %>
                             <li class="rating-item">
-                                🎮 <strong>Game:</strong> <%= rating.gameName %> | ⭐ Rating: <%= rating.rating %>
-                                <form action="/ratings/delete" method="POST">
+                                🎮 <strong>Game:</strong> <%= rating.gameName || "Unknown Game" %> | ⭐ Rating: <%= rating.rating %>
+                                <form action="/profile/remove-rating" method="POST">
                                     <input type="hidden" name="ratingId" value="<%= rating._id %>">
-                                    <button type="submit">🗑️ Delete</button>
+                                    <button type="submit" class="delete-btn">🗑️ Delete</button>
                                 </form>
                             </li>
                         <% }); %>
                     <% } else { %>
-                        <li>🔍 You didnt rate anything</li>
+                        <li>🔍 You haven't rated any games yet</li>
                     <% } %>
                 </ul>
             </div>
         <% } else { %>
-            <p>🔒 You have to be logged in to view profile <a href="/login">Login</a></p>
+            <p>🔒 You must be logged in to view your profile <a href="/login">Login</a></p>
         <% } %>
     </div>
 

@@ -12,19 +12,33 @@ exports.register = async (req, res) => {
         }
 
         const hashedPassword = await bcrypt.hash(password, 10);
+
+        // ✅ Save user first (without token)
         user = new User({ username, email, password: hashedPassword });
         await user.save();
 
-        const token = jwt.sign({ id: user._id, email: user.email }, process.env.JWT_SECRET, { expiresIn: "1h" });
+        // ✅ Generate token AFTER user is saved to get the correct `_id`
+        const token = jwt.sign({ userId: user._id.toString() }, process.env.JWT_SECRET, { expiresIn: "1h" });
+
+        // ✅ Update user with the correct token
+        user.token = token;
+        await user.save();
+
+        // ✅ Set the token in the cookie immediately
         res.cookie("token", token, { httpOnly: true });
 
-        console.log("✅ User registered:", user);
+        console.log("✅ User registered and authenticated:", user);
         res.redirect("/");
     } catch (error) {
         console.error("❌ Error in register:", error);
         res.status(500).render("register", { error: "Server error", user: null });
     }
 };
+
+
+
+
+
 
 exports.login = async (req, res) => {
     try {
