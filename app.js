@@ -4,7 +4,10 @@ const dotenv = require('dotenv');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const jwt = require('jsonwebtoken');
-
+const recommendationRoutes = require('./routes/recommendationRoutes');
+const ratingRoutes = require('./routes/ratingRoutes');
+const profileRoutes = require('./routes/profileRoutes'); // ✅ Add this
+const User = require('./models/User');
 dotenv.config();
 
 const app = express();
@@ -21,23 +24,33 @@ app.use(express.static('public'));
 // ✅ Middleware to extract user from JWT cookie
 app.use((req, res, next) => {
     const token = req.cookies.token;
+
     if (!token) {
+        console.log("❌ No token found in request.");
         res.locals.user = null;
         return next();
     }
 
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        req.user = decoded;
-        res.locals.user = decoded; // ✅ Now available in all EJS templates
+        console.log("✅ Decoded JWT:", decoded);
+
+        // ✅ Ensure `req.user` is properly set
+        req.user = { userId: decoded.userId };
+        res.locals.user = req.user; // ✅ Available in EJS templates
+        console.log("✅ Middleware assigned user:", req.user);
     } catch (err) {
+        console.error("❌ Invalid Token:", err.message);
         res.locals.user = null;
     }
     next();
 });
 
 
+
+
 // ✅ Define Routes
+app.use('/profile', profileRoutes); // ✅ Add this
 app.use('/auth', require('./routes/authRoutes'));
 app.use('/games', require('./routes/gameRoutes'));
 app.use('/ratings', require('./routes/ratingRoutes'));

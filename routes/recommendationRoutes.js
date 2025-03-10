@@ -1,7 +1,7 @@
 const express = require('express');
-const { getRecommendations } = require('../controllers/recommendationController');
-const authMiddleware = require('../middleware/authMiddleware');
 const router = express.Router();
+const authMiddleware = require('../middleware/authMiddleware');
+const { getRecommendations } = require('../controllers/recommendationController');
 
 router.get('/', authMiddleware, getRecommendations);
 

@@ -1,4 +1,5 @@
 const axios = require('axios');
+const User = require('../models/User');
 const { fetchYouTubeVideo } = require('../services/youtubeService'); // ✅ Import the YouTube service
 require('dotenv').config();
 
@@ -52,43 +53,78 @@ exports.getExploreGames = async (req, res) => {
 };
 
 
-exports.getGameInfo = async (gameId) => {
+exports.getGameInfo = async (gameId, userId) => {
     try {
         const response = await axios.get(`https://api.rawg.io/api/games/${gameId}`, {
-            params: { key: process.env.RAWG_API_KEY }
+            params: { key: RAWG_API_KEY }
         });
+
+        if (!response.data || !response.data.id) {
+            console.error(`❌ Game not found for ID: ${gameId}`);
+            return null;
+        }
 
         const gameData = response.data;
 
-        // ✅ Fetch Trailer and Gameplay Video from YouTube
+        // ✅ Fetch Trailer & Gameplay from YouTube
         console.log(`🔍 Fetching YouTube trailer and gameplay for "${gameData.name}"...`);
         const trailer = await fetchYouTubeVideo(gameData.name, "trailer");
         const gameplay = await fetchYouTubeVideo(gameData.name, "gameplay");
 
-        // ✅ Fetch Store Links from RAWG
+        // ✅ Fetch Store Links
         const storeResponse = await axios.get(`https://api.rawg.io/api/games/${gameId}/stores`, {
-            params: { key: process.env.RAWG_API_KEY }
+            params: { key: RAWG_API_KEY }
         });
 
-        const storeLinks = storeResponse.data.results.map(storeEntry => ({
-            name: STORE_NAMES[storeEntry.store_id] || "Unknown Store",
-            url: storeEntry.url
+        const storeLinks = storeResponse.data.results.map(store => ({
+            name: store.store?.name || "Unknown Store",
+            url: store.url
         }));
 
-        return {
+        const game = {
             id: gameData.id,
-            name: gameData.name,
+            name: gameData.name || "Unknown Game",
             description: gameData.description_raw || "No description available.",
-            genre: gameData.genres.map(g => g.name).join(", "),
-            averageRating: gameData.rating,
-            image: gameData.background_image,
+            genre: gameData.genres?.map(g => g.name).join(", ") || "Unknown",
+            averageRating: gameData.rating || "N/A",
+            image: gameData.background_image || "/images/no-image.jpg",
             trailer: trailer || null,
             gameplay: gameplay || null,
             stores: storeLinks.length > 0 ? storeLinks : null
         };
+
+        // ✅ Track Last Visited Games in MongoDB (if user is logged in)
+        if (userId) {
+            await User.findByIdAndUpdate(userId, {
+                $addToSet: { lastVisitedGames: game.id } // Prevents duplicates
+            }, { new: true });
+        }
+
+        return game;
+
     } catch (error) {
         console.error("❌ Error fetching game info:", error);
         return null;
+    }
+};
+
+exports.renderGameInfo = async (req, res) => {
+    try {
+        const referer = req.headers.referer;
+        let backPage = "explore"; // Default page
+
+        if (referer) {
+            if (referer.endsWith("/")) backPage = "home";
+            if (referer.includes("/games/explore")) backPage = "explore";
+        }
+
+        const game = await exports.getGameInfo(req.params.id, req.user ? req.user._id : null);
+
+        res.render('game-info', { game, referer: backPage });
+
+    } catch (error) {
+        console.error("❌ Error rendering game info:", error);
+        res.status(500).render('game-info', { game: null, referer: "explore" });
     }
 };
 

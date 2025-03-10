@@ -1,20 +1,26 @@
 const jwt = require('jsonwebtoken');
+const User = require('../models/User');
 require('dotenv').config();
 
-module.exports = (req, res, next) => {
-    const token = req.cookies.token; // ✅ Get JWT from cookies
-
-    if (!token) {
-        return res.redirect('/login'); // Redirect if not logged in
-    }
-
+module.exports = async (req, res, next) => {
     try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        req.user = decoded;
-        res.locals.user = decoded; // ✅ Now available in all templates
+        if (!req.user || !req.user.userId) {
+            console.log("❌ No user ID in request.");
+            return res.redirect('/login');
+        }
+
+        const user = await User.findById(req.user.userId);
+        if (!user) {
+            console.log("❌ User not found in database.");
+            return res.redirect('/login');
+        }
+
+        req.user = user;
+        res.locals.user = user;
+        console.log("✅ Authenticated User:", user.username);
         next();
     } catch (error) {
-        res.clearCookie("token");
+        console.error("❌ Authentication error:", error.message);
         return res.redirect('/login');
     }
 };

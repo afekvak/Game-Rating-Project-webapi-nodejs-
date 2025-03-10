@@ -70,8 +70,8 @@ router.get('/search/suggestions', async (req, res) => {
 });
 
 // ✅ Profile route now uses JWT authentication
-router.get('/profile', authMiddleware, (req, res) => {
-    res.render('profile', { user: res.locals.user });
-});
+// router.get('/profile', authMiddleware, (req, res) => {
+//     res.render('profile', { user: res.locals.user });
+// });
 
 module.exports = router;

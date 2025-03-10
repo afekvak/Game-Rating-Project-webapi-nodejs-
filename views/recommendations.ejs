@@ -1,25 +1,27 @@
-<!DOCTYPE html>
-<html lang="he">
 <%- include('partials/head') %>
+<body>
+    <%- include('partials/navbar') %>
 
-    <body>
-        <%- include('partials/navbar') %>
-            <div class="container">
-                <h2>🌟 משחקים מומלצים עבורך</h2>
-                <div class="recommendations-list">
-                    <% recommendations.forEach(game=> { %>
-                        <div class="game-card">
-                            <h3>
-                                <%= game.name %>
-                            </h3>
-                            <p>ז'אנר: <%= game.genre %>
-                            </p>
-                            <a href="/game-info/<%= game.id %>" class="btn">📜 פרטי המשחק</a>
-                        </div>
-                        <% }) %>
+    <div class="container">
+        <h2>🌟 Games Recommended by AI based on your Ratings</h2>
+
+        <!-- ✅ AI Message -->
+        <% if (aiMessage) { %>
+            <p class="ai-message">🤖 <%= aiMessage %></p>
+        <% } %>
+
+        <!-- ✅ Recommendations Gallery -->
+        <div class="recommendations-gallery">
+            <% recommendations.forEach(game => { %>
+                <div class="game-card">
+                    <img src="<%= game.image %>" alt="<%= game.name %>">
+                    <h3><%= game.name %></h3>
+                    <a href="/games/game-info/<%= game.id %>" class="btn">📜 פרטים נוספים</a>
                 </div>
-            </div>
-            <%- include('partials/footer') %>
-    </body>
+            <% }) %>
+        </div>
+    </div>
 
+    <%- include('partials/footer') %>
+</body>
 </html>

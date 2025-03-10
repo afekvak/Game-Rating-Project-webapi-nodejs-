@@ -1,17 +1,73 @@
-<!DOCTYPE html>
-      <html lang="he">
-       <%- include('partials/head') %>
-      <body>
-          <%- include('partials/navbar') %>
-          <div class="container">
-              <% if (user) { %>
-                  <h2>👤 פרופיל משתמש</h2>
-                   <p>שם משתמש: <%= user.username %></p>
-                  <p>אימייל: <%= user.email %></p>
-              <% } else { %>
-                 <p>🔒 יש להתחבר כדי לצפות בפרופיל שלך. <a href="/login">התחבר</a></p>
-               <% } %>
-          </div>
-          <%- include('partials/footer') %>
-      </body>
-       </html>
+<%- include('partials/head') %>
+<body>
+    <%- include('partials/navbar') %>
+
+    <div class="profile-container">
+        <% if (user) { %>
+            <h2>👤 Your Profile</h2>
+            <img src="<%= user.profilePicture || '/images/default-profile.png' %>" class="profile-picture">
+            <h3><%= user.username %></h3>
+            <p><%= user.email %></p>
+
+            <!-- 🔹 Update Profile Form -->
+            <form action="/profile/update-photo" method="POST">
+                <input type="url" name="photoUrl" placeholder="🔗 Link to a Profile Picture" required>
+                <button type="submit">Update Photo</button>
+            </form>
+
+            <form action="/profile/update-info" method="POST">
+                <input type="text" name="username" placeholder="✏️ New Username" required>
+                <button type="submit">Update Username</button>
+            </form>
+
+            <form action="/profile/update-password" method="POST">
+                <input type="password" name="password" placeholder="🔑 New Password" required>
+                <button type="submit">Update Password</button>
+            </form>
+
+            <!-- 🎮 Last Visited Games -->
+            <div class="recent-games">
+                <h4>🎮 Last Viewed Games</h4>
+                <ul>
+                    <% if (user.recentGames && user.recentGames.length > 0) { %>
+                        <% user.recentGames.forEach(game => { %>
+                            <li>
+                                <a href="/games/game-info/<%= game.id %>">
+                                    <img src="<%= game.image %>">
+                                    <%= game.name %>
+                                </a>
+                            </li>
+                        <% }); %>
+                    <% } else { %>
+                        <li>🔍 No last viewed games</li>
+                    <% } %>
+                </ul>
+            </div>
+
+            <!-- ⭐ User Ratings -->
+            <div class="ratings-container">
+                <h4>⭐ Your Ratings</h4>
+                <ul>
+                    <% if (ratings && ratings.length > 0) { %>
+                        <% ratings.forEach(rating => { %>
+                            <li class="rating-item">
+                                🎮 <strong>Game:</strong> <%= rating.gameName %> | ⭐ Rating: <%= rating.rating %>
+                                <form action="/ratings/delete" method="POST">
+                                    <input type="hidden" name="ratingId" value="<%= rating._id %>">
+                                    <button type="submit">🗑️ Delete</button>
+                                </form>
+                            </li>
+                        <% }); %>
+                    <% } else { %>
+                        <li>🔍 You didnt rate anything</li>
+                    <% } %>
+                </ul>
+            </div>
+        <% } else { %>
+            <p>🔒 You have to be logged in to view profile <a href="/login">Login</a></p>
+        <% } %>
+    </div>
+
+    <%- include('partials/footer') %>
+</body>
+</html>

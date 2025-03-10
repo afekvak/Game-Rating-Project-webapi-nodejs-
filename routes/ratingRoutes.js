@@ -1,8 +1,8 @@
 const express = require('express');
-const { rateGame } = require('../controllers/ratingController');
-const authMiddleware = require('../middleware/authMiddleware');
 const router = express.Router();
+const authMiddleware = require('../middleware/authMiddleware'); 
+const ratingController = require('../controllers/ratingController');
 
-router.post('/rate', authMiddleware, rateGame);
+router.post('/submit', authMiddleware, ratingController.submitRating);
 
 module.exports = router;

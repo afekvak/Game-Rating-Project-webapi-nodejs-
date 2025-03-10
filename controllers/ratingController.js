@@ -1,21 +1,22 @@
 const Rating = require('../models/Rating');
 
-exports.rateGame = async (req, res) => {
+exports.submitRating = async (req, res) => {
     try {
-        const { gameId, rating } = req.body;
-        const userId = req.user.id;
-
-        let existingRating = await Rating.findOne({ user: userId, game: gameId });
-        if (existingRating) {
-            existingRating.rating = rating;
-            await existingRating.save();
-        } else {
-            const newRating = new Rating({ user: userId, game: gameId, rating });
-            await newRating.save();
+        if (!req.user) {
+            return res.status(401).json({ message: "Unauthorized. Please log in." });
         }
 
-        res.json({ message: "Rating saved!" });
+        const { gameId, rating } = req.body;
+        if (!gameId || !rating) {
+            return res.status(400).json({ message: "Game ID and rating are required." });
+        }
+
+        // ✅ Save Rating
+        await Rating.create({ user: req.user._id, gameId, rating });
+
+        res.json({ message: "Rating saved successfully!" });
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        console.error("❌ Error saving rating:", error);
+        res.status(500).json({ message: "Error saving rating." });
     }
 };

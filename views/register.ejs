@@ -4,12 +4,12 @@
       <body>
           <%- include('partials/navbar') %>
           <div class="container">
-              <h2>📜 הרשמה</h2>
+              <h2>📜 Register</h2>
                <form action="/auth/register" method="POST">
-                   <input type="text" name="username" placeholder="שם משתמש" required>
-                  <input type="email" name="email" placeholder="אימייל" required>
-                  <input type="password" name="password" placeholder="סיסמה" required>
-                  <button type="submit" class="btn">✅ הירשם</button>
+                   <input type="text" name="username" placeholder="Username" required>
+                  <input type="email" name="email" placeholder="Email" required>
+                  <input type="password" name="password" placeholder="Password" required>
+                  <button type="submit" class="btn">✅ Register</button>
               </form>
           </div>
           <%- include('partials/footer') %>

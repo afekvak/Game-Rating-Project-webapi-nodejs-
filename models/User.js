@@ -5,7 +5,9 @@ const UserSchema = new mongoose.Schema({
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     token: { type: String, required: true },
+    profilePicture: { type: String, default: '/assets/empty.jpeg' }, // ✅ Profile Picture
+    lastVisitedGames: [{ type: String }], // ✅ Store last visited game IDs
     createdAt: { type: Date, default: Date.now }
-}); // 👈 הוספת שם קולקשן קבוע
+});
 
 module.exports = mongoose.model('User', UserSchema);
