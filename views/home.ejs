@@ -1,17 +1,25 @@
+<!-- ✅ Include the head section -->
 <%- include('partials/head') %>
+
 <body>
+    <!-- ✅ Include the navigation bar -->
     <%- include('partials/navbar') %>
 
+    <!-- ✅ Main container for homepage content -->
     <div class="container">
         <h1>🎮 Welcome to AI Game Recommender</h1>
         <p>Find the best games with AI-powered recommendations!</p>
+
+        <!-- ✅ Explore games button -->
         <a href="/games/explore" class="btn">🕹️ Explore Games</a>
 
         <% if (user) { %>
+            <!-- ✅ Show user-specific options if logged in -->
             <a href="/profile" class="btn">🔹 My Profile</a>
             <a href="/recommendations" class="btn">🌟 Recommended for You</a>
         <% } %>
 
+        <!-- ✅ Most popular games section -->
         <div class="top-games-section">
             <h2>🔥 Most Popular Games</h2>
             <div class="top-games-gallery">
@@ -27,6 +35,7 @@
         </div>
     </div>
 
+    <!-- ✅ Include the footer section -->
     <%- include('partials/footer') %>
 </body>
 </html>

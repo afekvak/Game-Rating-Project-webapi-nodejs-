@@ -1,15 +1,20 @@
+<!-- ✅ Include the head section -->
 <%- include('partials/head') %>
+
 <body>
+    <!-- ✅ Include the navigation bar -->
     <%- include('partials/navbar') %>
 
+    <!-- ✅ Profile container -->
     <div class="profile-container">
         <% if (user) { %>
+            <!-- ✅ Display user profile details -->
             <h2>👤 Your Profile</h2>
             <img src="<%= user.profilePicture || '/images/default-profile.png' %>" class="profile-picture">
             <h3><%= user.username %></h3>
             <p><%= user.email %></p>
 
-            <!-- 🔹 Update Profile Form -->
+            <!-- 🔹 Update Profile Forms -->
             <form action="/profile/update-photo" method="POST">
                 <input type="url" name="photoUrl" placeholder="🔗 Link to a Profile Picture" required>
                 <button type="submit">Update Photo</button>
@@ -25,7 +30,7 @@
                 <button type="submit">Update Password</button>
             </form>
 
-            <!-- 🎮 Last Visited Games -->
+            <!-- 🎮 Last Visited Games Section -->
             <div class="recent-games">
                 <h4>🎮 Last Viewed Games</h4>
                 <ul>
@@ -44,7 +49,7 @@
                 </ul>
             </div>
 
-            <!-- ⭐ User Ratings -->
+            <!-- ⭐ User Ratings Section -->
             <div class="ratings-container">
                 <h4>⭐ Your Ratings</h4>
                 <ul>
@@ -64,10 +69,12 @@
                 </ul>
             </div>
         <% } else { %>
+            <!-- ✅ If user is not logged in -->
             <p>🔒 You must be logged in to view your profile <a href="/login">Login</a></p>
         <% } %>
     </div>
 
+    <!-- ✅ Include the footer section -->
     <%- include('partials/footer') %>
 </body>
 </html>

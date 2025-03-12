@@ -1,10 +1,17 @@
+<!-- ✅ Include the navigation bar -->
 <%- include('partials/navbar') %>
-    <div class="container">
-        <h2>
-            <%= game.name %>
-        </h2>
-        <p>Rating: <%= game.rating %>
-        </p>
-        <img src="<%= game.background_image %>" width="200">
-    </div>
-    <%- include('partials/footer') %>
+
+<!-- ✅ Main container for game details -->
+<div class="container">
+    <!-- ✅ Display game name -->
+    <h2><%= game.name %></h2>
+
+    <!-- ✅ Display game rating -->
+    <p>Rating: <%= game.rating %></p>
+
+    <!-- ✅ Display game background image -->
+    <img src="<%= game.background_image %>" width="200">
+</div>
+
+<!-- ✅ Include the footer section -->
+<%- include('partials/footer') %>

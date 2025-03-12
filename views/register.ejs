@@ -1,11 +1,23 @@
 <!DOCTYPE html>
 <html lang="he">
+
+<!-- ✅ Include the head section -->
 <%- include('partials/head') %>
+
 <body>
+    <!-- ✅ Include the navigation bar -->
     <%- include('partials/navbar') %>
 
+    <!-- ✅ Registration form container -->
     <div class="register-container">
         <h2>📜 Register</h2>
+
+        <% if (typeof error !== "undefined" && error) { %>
+            <!-- ✅ Display error message if registration fails -->
+            <p class="error-message"><%= error %></p>
+        <% } %>
+
+        <!-- ✅ Registration form -->
         <form action="/auth/register" method="POST">
             <input type="text" name="username" placeholder="👤 Username" required>
             <input type="email" name="email" placeholder="📧 Email" required>
@@ -14,6 +26,7 @@
         </form>
     </div>
 
+    <!-- ✅ Include the footer section -->
     <%- include('partials/footer') %>
 </body>
 </html>

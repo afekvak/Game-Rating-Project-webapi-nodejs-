@@ -1,7 +1,11 @@
-const axios = require('axios');
-const User = require('../models/User');
-const { fetchYouTubeVideo } = require('../services/youtubeService'); // ✅ Import the YouTube service
-require('dotenv').config();
+const axios = require('axios'); // Library for making HTTP requests
+const User = require('../models/User'); // Import User model from database
+const mongoose = require("mongoose"); // MongoDB library for ObjectId validation
+const { fetchYouTubeVideo } = require('../services/youtubeService'); // Import YouTube service
+require('dotenv').config(); // Load environment variables
+
+const RAWG_API_KEY = process.env.RAWG_API_KEY; // API Key for RAWG API
+const YOUTUBE_API_KEY = process.env.YOUTUBE_API_KEY; // API Key for YouTube
 
 // ✅ Store names mapping
 const STORE_NAMES = {
@@ -17,46 +21,49 @@ const STORE_NAMES = {
     11: "Epic Games Store" // ✅ Another possible ID for Epic Games Store
 };
 
-
-const RAWG_API_KEY = process.env.RAWG_API_KEY;
-const YOUTUBE_API_KEY = process.env.YOUTUBE_API_KEY;
-
+/**
+ * Fetches a list of games from RAWG API for the explore page.
+ * - Retrieves game data and displays it on the explore page.
+ * - Handles both JSON responses and EJS page rendering.
+ */
 exports.getExploreGames = async (req, res) => {
     try {
-        const page = parseInt(req.query.page) || 1;
+        const page = parseInt(req.query.page) || 1; // Get current page, default to 1
         const response = await axios.get(`https://api.rawg.io/api/games`, {
-            params: {
-                key: process.env.RAWG_API_KEY,
-                page_size: 12,
-                page: page
-            }
+            params: { key: RAWG_API_KEY, page_size: 12, page: page }
         });
 
+        // Map the fetched games into a cleaner format
         const games = response.data.results.map(game => ({
             id: game.id,
             name: game.name,
             image: game.background_image || "https://via.placeholder.com/200x300?text=No+Image"
         }));
 
-        console.log("🔍 Current User in explore:", req.user); // Debugging
+        console.log("🔍 Current User in explore:", req.user); // Debugging user info
 
         // ✅ If it's an AJAX request, return JSON instead of rendering a page
         if (req.xhr || req.headers.accept.indexOf('json') > -1) {
             return res.json({ games });
         }
 
+        // Render the explore page with game data
         res.render("explore", { games, user: req.user || null });
+
     } catch (error) {
         console.error("❌ Error fetching games from RAWG:", error);
         res.status(500).json({ error: "Error fetching games" });
     }
 };
 
-
-const mongoose = require("mongoose");
-
+/**
+ * Fetches detailed game information from RAWG API.
+ * - Retrieves game data, trailer, gameplay, and store links.
+ * - Updates the user's last viewed games if logged in.
+ */
 exports.getGameInfo = async (gameId, userId) => {
     try {
+        // ✅ Fetch game details from RAWG API
         const response = await axios.get(`https://api.rawg.io/api/games/${gameId}`, {
             params: { key: RAWG_API_KEY }
         });
@@ -68,10 +75,12 @@ exports.getGameInfo = async (gameId, userId) => {
 
         const gameData = response.data;
 
+        // ✅ Fetch Trailer & Gameplay from YouTube
         console.log(`🔍 Fetching YouTube trailer and gameplay for "${gameData.name}"...`);
         const trailer = await fetchYouTubeVideo(gameData.name, "trailer");
         const gameplay = await fetchYouTubeVideo(gameData.name, "gameplay");
 
+        // ✅ Fetch Store Links from RAWG API
         const storeResponse = await axios.get(`https://api.rawg.io/api/games/${gameId}/stores`, {
             params: { key: RAWG_API_KEY }
         });
@@ -81,6 +90,7 @@ exports.getGameInfo = async (gameId, userId) => {
             url: store.url
         }));
 
+        // ✅ Construct game object
         const game = {
             id: gameData.id,
             name: gameData.name || "Unknown Game",
@@ -143,24 +153,32 @@ exports.getGameInfo = async (gameId, userId) => {
 };
 
 
+/**
+ * Renders the game information page.
+ * - Determines the previous page to set the back button.
+ * - Fetches game details from RAWG API.
+ * - Updates the user's last viewed games if logged in.
+ */
 exports.renderGameInfo = async (req, res) => {
     try {
-        const referer = req.headers.referer;
-        let backPage = "explore"; // Default back button page
+        const referer = req.headers.referer; // Get the referrer (previous page)
+        let backPage = "explore"; // Default back button destination
 
+        // ✅ Determine where the back button should lead based on the referrer
         if (referer) {
-            if (referer.endsWith("/")) backPage = "home";
-            if (referer.includes("/games/explore")) backPage = "explore";
+            if (referer.endsWith("/")) backPage = "home"; // If from home page
+            if (referer.includes("/games/explore")) backPage = "explore"; // If from explore page
         }
 
-        // ✅ Ensure userId is extracted correctly
+        // ✅ Extract userId from the JWT session if the user is logged in
         const userId = req.user && req.user.userId ? req.user.userId : null;
 
         console.log(`🔄 User ${userId ? userId : "Guest"} is viewing game ID: ${req.params.id}`);
 
-        // ✅ Fetch game info and track last viewed games
+        // ✅ Fetch game details and update last viewed games if user is logged in
         const game = await exports.getGameInfo(req.params.id, userId);
 
+        // ✅ Render the game-info page with fetched data
         res.render('game-info', { game, referer: backPage });
 
     } catch (error) {
@@ -169,30 +187,34 @@ exports.renderGameInfo = async (req, res) => {
     }
 };
 
-
-
+/**
+ * Fetches the available store links for a game from RAWG API.
+ * - Retrieves game store purchase links from RAWG API.
+ * - Maps store IDs to human-readable names.
+ */
 exports.getGameStores = async (req, res) => {
     try {
-        const { id } = req.params;
+        const { id } = req.params; // Extract game ID from URL
 
-        // Fetch game details (for the name)
+        // ✅ Fetch game details (for the name)
         const response = await axios.get(`https://api.rawg.io/api/games/${id}`, {
             params: { key: process.env.RAWG_API_KEY }
         });
 
-        const gameData = response.data;
+        const gameData = response.data; // Store game information
 
-        // Fetch store links
+        // ✅ Fetch available store links for the game
         const storeResponse = await axios.get(`https://api.rawg.io/api/games/${id}/stores`, {
             params: { key: process.env.RAWG_API_KEY }
         });
 
-        // Extract store links and map store_id to readable name
+        // ✅ Extract store links and map store_id to human-readable names
         const storeLinks = storeResponse.data.results.map(store => ({
-            name: STORE_NAMES[store.store_id] || "Unknown Store", // ✅ Fix: Use mapped store name
-            url: store.url
+            name: STORE_NAMES[store.store_id] || "Unknown Store", // Convert store ID to store name
+            url: store.url // Store purchase link
         }));
 
+        // ✅ Render the game-stores page with store data
         res.render('game-stores', { game: { name: gameData.name, stores: storeLinks } });
 
     } catch (error) {
@@ -201,26 +223,32 @@ exports.getGameStores = async (req, res) => {
     }
 };
 
-
+/**
+ * Fetches the most popular games from RAWG API.
+ * - Retrieves the most popular games based on number of additions.
+ * - Returns a list of games with name, ID, image, and rating.
+ */
 exports.getPopularGames = async () => {
     try {
+        // ✅ Fetch the most popular games
         const response = await axios.get(`https://api.rawg.io/api/games`, {
             params: {
-                key: RAWG_API_KEY,
-                ordering: "-added",
-                page_size: 12
+                key: RAWG_API_KEY, // Use RAWG API key
+                ordering: "-added", // Sort by most added games
+                page_size: 12 // Limit the number of results
             }
         });
 
+        // ✅ Process and return the game list
         return response.data.results.map(game => ({
             id: game.id,
             name: game.name,
             image: game.background_image,
             rating: game.rating
         }));
+
     } catch (error) {
         console.error("❌ Error fetching popular games:", error);
-        return [];
+        return []; // Return an empty array in case of an error
     }
 };
-

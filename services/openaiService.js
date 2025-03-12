@@ -1,3 +1,7 @@
+
+// currently not using OpenAI API, using gemini API instead
+
+
 // const OpenAI = require("openai");
 // require('dotenv').config();
 

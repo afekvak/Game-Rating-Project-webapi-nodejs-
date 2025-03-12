@@ -1,24 +1,33 @@
+<!-- ✅ Include the head section -->
 <%- include('partials/head') %>
+
 <body>
+    <!-- ✅ Include the navigation bar -->
     <%- include('partials/navbar') %>
 
+    <!-- ✅ Main container for purchase links -->
     <div class="game-container">
         <h1>🛒 Purchase "<%= game.name %>"</h1>
 
         <% if (game.stores && game.stores.length > 0) { %>
+            <!-- ✅ List available stores for purchasing the game -->
             <div class="store-list">
                 <% game.stores.forEach(store => { %>
                     <p>🛒 Purchase from <strong><%= store.name %></strong></p>
+                    <!-- ✅ Store purchase link -->
                     <a href="<%= store.url %>" target="_blank" class="btn btn-buy"><%= store.name %></a>
                 <% }) %>
             </div>
         <% } else { %>
+            <!-- ✅ Display message if no stores are available -->
             <p>No stores available for this game.</p>
         <% } %>
 
+        <!-- ✅ Back button to return to the previous page -->
         <a href="javascript:history.back()" class="btn">⬅ Back</a>
     </div>
 
+    <!-- ✅ Include the footer section -->
     <%- include('partials/footer') %>
 </body>
 </html>

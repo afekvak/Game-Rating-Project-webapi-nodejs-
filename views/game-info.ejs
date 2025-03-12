@@ -1,100 +1,112 @@
+<!DOCTYPE html>
+<html lang="he">
+
+<!-- ✅ Include the head section -->
 <%- include('partials/head') %>
 
-    <body>
-        <%- include('partials/navbar') %>
+<body>
+    <!-- ✅ Include the navigation bar -->
+    <%- include('partials/navbar') %>
 
-            <div class="game-container">
-                <a href="<%= referer === 'home' ? '/' : '/games/explore' %>" class="back-btn">⬅ Back</a>
+    <!-- ✅ Main game details container -->
+    <div class="game-container">
 
-                <% if (!game) { %>
-                    <h2>⚠️ Game not found</h2>
-                    <p>We couldn't retrieve the game details. Please try again later.</p>
-                    <% } else { %>
-                        <h1 class="game-title">
-                            <%= game.name %>
-                        </h1>
+        <!-- ✅ Back button: Returns to either Home or Explore page -->
+        <a href="<%= referer === 'home' ? '/' : '/games/explore' %>" class="back-btn">⬅ Back</a>
 
-                        <div class="game-image-container">
-                            <img src="<%= game.image %>" alt="<%= game.name %>" class="game-image">
-                        </div>
+        <% if (!game) { %>
+            <!-- ✅ If game data is missing, show an error message -->
+            <h2>⚠️ Game not found</h2>
+            <p>We couldn't retrieve the game details. Please try again later.</p>
+        <% } else { %>
+        
+            <!-- ✅ Display game title -->
+            <h1 class="game-title"><%= game.name %></h1>
 
-                        <div class="game-description">
-                            <p><strong>🎮 Genre:</strong>
-                                <%= game.genre %>
-                            </p>
-                            <p><strong>⭐ Average Rating:</strong>
-                                <%= game.averageRating %>
-                            </p>
-                            <p>
-                                <%= game.description %>
-                            </p>
-                        </div>
-
-                        <% if (game.trailer) { %>
-                            <div class="game-video">
-                                <h2>🎥 Trailer</h2>
-                                <iframe width="100%" height="315" src="<%= game.trailer %>" frameborder="0"
-                                    allowfullscreen></iframe>
-                            </div>
-                            <% } else { %>
-                                <div class="game-video">
-                                    <h2>🎥 No Trailer Available</h2>
-                                </div>
-                                <% } %>
-
-                                    <% if (game.gameplay) { %>
-                                        <div class="game-video">
-                                            <h2>🎮 Gameplay</h2>
-                                            <iframe width="100%" height="315" src="<%= game.gameplay %>" frameborder="0"
-                                                allowfullscreen></iframe>
-                                        </div>
-                                        <% } else { %>
-                                            <div class="game-video">
-                                                <h2>🎮 No Gameplay Video Available</h2>
-                                            </div>
-                                            <% } %>
-
-                                            <div class="game-rating">
-                                                <form id="ratingForm">
-                                                    <label for="rating">🌟 Rate the game:</label>
-                                                    <select id="rating" name="rating">
-                                                        <option value="1">⭐</option>
-                                                        <option value="2">⭐⭐</option>
-                                                        <option value="3">⭐⭐⭐</option>
-                                                        <option value="4">⭐⭐⭐⭐</option>
-                                                        <option value="5">⭐⭐⭐⭐⭐</option>
-                                                    </select>
-                                                    <button type="submit" class="btn">💾 Save Rating</button>
-                                                </form>
-                                            </div>
-                                            
-                                            <script>
-                                                document.getElementById("ratingForm").addEventListener("submit", async (e) => {
-                                                    e.preventDefault();
-                                                    const rating = document.getElementById("rating").value;
-                                            
-                                                    const response = await fetch("/ratings/submit", {
-                                                        method: "POST",
-                                                        headers: {
-                                                            "Content-Type": "application/json"
-                                                        },
-                                                        body: JSON.stringify({ gameId: "<%= game.id %>", rating })
-                                                    });
-                                            
-                                                    const data = await response.json();
-                                                    alert(data.message);
-                                                });
-                                            </script>
-                                            
-
-                                                <% if (game.stores) { %>
-                                                    <p><a href="/games/<%= game.id %>/stores" class="btn btn-buy">🛒
-                                                            Purchase Links</a></p>
-                                                    <% } %>
-                                                        <% } %>
+            <!-- ✅ Game Image -->
+            <div class="game-image-container">
+                <img src="<%= game.image %>" alt="<%= game.name %>" class="game-image">
             </div>
 
-            <%- include('partials/footer') %>
-    </body>
+            <!-- ✅ Game description and details -->
+            <div class="game-description">
+                <p><strong>🎮 Genre:</strong> <%= game.genre %></p>
+                <p><strong>⭐ Average Rating:</strong> <%= game.averageRating %></p>
+                <p><%= game.description %></p>
+            </div>
 
-    </html>
+            <% if (game.trailer) { %>
+                <!-- ✅ Game Trailer -->
+                <div class="game-video">
+                    <h2>🎥 Trailer</h2>
+                    <iframe width="100%" height="315" src="<%= game.trailer %>" frameborder="0" allowfullscreen></iframe>
+                </div>
+            <% } else { %>
+                <!-- ✅ If no trailer is available, display a message -->
+                <div class="game-video">
+                    <h2>🎥 No Trailer Available</h2>
+                </div>
+            <% } %>
+
+            <% if (game.gameplay) { %>
+                <!-- ✅ Gameplay Video -->
+                <div class="game-video">
+                    <h2>🎮 Gameplay</h2>
+                    <iframe width="100%" height="315" src="<%= game.gameplay %>" frameborder="0" allowfullscreen></iframe>
+                </div>
+            <% } else { %>
+                <!-- ✅ If no gameplay video is available, display a message -->
+                <div class="game-video">
+                    <h2>🎮 No Gameplay Video Available</h2>
+                </div>
+            <% } %>
+
+            <!-- ✅ Game Rating Section -->
+            <div class="game-rating">
+                <form id="ratingForm">
+                    <label for="rating">🌟 Rate the game:</label>
+                    <select id="rating" name="rating">
+                        <option value="1">⭐</option>
+                        <option value="2">⭐⭐</option>
+                        <option value="3">⭐⭐⭐</option>
+                        <option value="4">⭐⭐⭐⭐</option>
+                        <option value="5">⭐⭐⭐⭐⭐</option>
+                    </select>
+                    <button type="submit" class="btn">💾 Save Rating</button>
+                </form>
+            </div>
+
+            <!-- ✅ JavaScript to handle rating submission -->
+            <script>
+                document.getElementById("ratingForm").addEventListener("submit", async (e) => {
+                    e.preventDefault(); // ✅ Prevent form from refreshing the page
+                    const rating = document.getElementById("rating").value; // ✅ Get selected rating value
+
+                    // ✅ Send rating data to the server
+                    const response = await fetch("/ratings/submit", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({ gameId: "<%= game.id %>", rating })
+                    });
+
+                    const data = await response.json(); // ✅ Convert response to JSON
+                    alert(data.message); // ✅ Show success or error message
+                });
+            </script>
+
+            <% if (game.stores) { %>
+                <!-- ✅ Button to check where to buy the game -->
+                <p><a href="/games/<%= game.id %>/stores" class="btn btn-buy">🛒 Purchase Links</a></p>
+            <% } %>
+        <% } %>
+
+    </div>
+
+    <!-- ✅ Include the footer section -->
+    <%- include('partials/footer') %>
+
+</body>
+
+</html>

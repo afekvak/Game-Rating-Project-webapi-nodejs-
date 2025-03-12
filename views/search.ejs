@@ -1,9 +1,14 @@
 <!DOCTYPE html>
 <html lang="he">
+
+<!-- ✅ Include the head section -->
 <%- include('partials/head') %>
+
 <body>
+    <!-- ✅ Include the navigation bar -->
     <%- include('partials/navbar') %>
 
+    <!-- ✅ Search form container -->
     <div class="search-container">
         <h2 class="search-title">🔎 Search Game</h2>
         
@@ -18,11 +23,15 @@
         <ul id="suggestions" class="suggestions-list"></ul>
 
         <% if (typeof error !== 'undefined' && error) { %>
+            <!-- ✅ Display error message if search fails -->
             <p class="error-message">❌ <%= error %></p>
         <% } %>
     </div>
 
+    <!-- ✅ Include the footer section -->
     <%- include('partials/footer') %>
+
+    <!-- ✅ Load JavaScript file for search functionality -->
     <script src="/js/search.js"></script>
 </body>
 </html>

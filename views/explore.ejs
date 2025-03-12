@@ -1,22 +1,40 @@
 <!DOCTYPE html>
 <html lang="he">
+
+<!-- ✅ Include the head section (contains meta tags, title, and CSS link) -->
 <%- include('partials/head') %>
+
 <body>
+    <!-- ✅ Include the navigation bar -->
     <%- include('partials/navbar') %>
+
+    <!-- ✅ Main container for the explore page -->
     <div class="container">
         <h2>🎮 Explore Games!</h2>
+
+        <!-- ✅ Game gallery container -->
         <div class="game-gallery">
+            <!-- ✅ Loop through each game in the `games` array -->
             <% games.forEach(game => { %>
                 <div class="game-card">
+                    <!-- ✅ Display game image -->
                     <img src="<%= game.image %>" alt="<%= game.name %>">
+                    
+                    <!-- ✅ Display game name -->
                     <h3><%= game.name %></h3>
+                    
+                    <!-- ✅ Button to view more details about the game -->
                     <a href="/games/game-info/<%= game.id %>" class="btn">📜 פרטי המשחק</a>
                 </div>
             <% }) %>
         </div>
     </div>
-    <%- include('partials/footer') %>
-    <script src="/js/infiniteScroll.js"></script>
 
+    <!-- ✅ Include the footer section -->
+    <%- include('partials/footer') %>
+
+    <!-- ✅ JavaScript for infinite scrolling (loading more games) -->
+    <script src="/js/infiniteScroll.js"></script>
 </body>
+
 </html>

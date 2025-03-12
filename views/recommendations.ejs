@@ -1,11 +1,15 @@
+<!-- ✅ Include the head section -->
 <%- include('partials/head') %>
+
 <body>
+    <!-- ✅ Include the navigation bar -->
     <%- include('partials/navbar') %>
 
+    <!-- ✅ Container for recommendations -->
     <div class="container">
         <h2>🌟 Games Recommended by AI based on your Ratings</h2>
 
-        <!-- ✅ AI Message -->
+        <!-- ✅ Display AI message if available -->
         <% if (aiMessage) { %>
             <p class="ai-message">🤖 <%= aiMessage %></p>
         <% } %>
@@ -22,6 +26,7 @@
         </div>
     </div>
 
+    <!-- ✅ Include the footer section -->
     <%- include('partials/footer') %>
 </body>
 </html>
