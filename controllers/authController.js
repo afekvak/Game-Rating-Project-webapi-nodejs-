@@ -1,10 +1,8 @@
 const bcrypt = require("bcryptjs"); // Library for hashing passwords
 const jwt = require("jsonwebtoken"); // Library for generating and verifying JSON Web Tokens (JWT)
 const User = require("../models/User"); // Import the User model
-const sgMail = require("@sendgrid/mail");
+const { sendVerificationEmail, sendWelcomeEmail } = require("../services/emailService"); // ✅ Import email service
 
-// ✅ Set API key for SendGrid
-sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 /**
  * Handles user registration
@@ -75,6 +73,11 @@ exports.verifyEmail = async (req, res) => {
         await user.save();
 
         console.log(`✅ User ${user.email} verified.`);
+
+        // ✅ Send Welcome Email
+        sendWelcomeEmail(user.email, user.username);
+
+        // ✅ Redirect to login page with a success message
         res.render("login", { error: "✅ Email verified! You can now log in.", user: null });
 
     } catch (error) {
@@ -82,6 +85,7 @@ exports.verifyEmail = async (req, res) => {
         res.status(500).send("Verification failed.");
     }
 };
+
 
 /**
  * Handles user login
@@ -137,31 +141,4 @@ exports.logout = (req, res) => {
     res.redirect("/"); // Redirect to home page
 };
 
-/**
- * Sends a verification email with a verification link.
- */
-const sendVerificationEmail = async (email, token) => {
-    try {
-        // ✅ Use Render-deployed URL instead of localhost
-        const verificationLink = `${process.env.BASE_URL}/auth/verify-email?token=${token}`;
 
-        const msg = {
-            to: email, // Recipient email
-            from: process.env.EMAIL_FROM, // Sender email (must be verified in SendGrid)
-            subject: "Verify Your Email - AI Game Recommender",
-            html: `
-                <h2>Welcome to AI Game Recommender! 🎮</h2>
-                <p>Click the link below to verify your email address:</p>
-                <a href="${verificationLink}" style="background-color:blue; color:white; padding:10px; text-decoration:none; border-radius:5px;">
-                    ✅ Verify Email
-                </a>
-                <p>If you didn't register, please ignore this email.</p>
-            `,
-        };
-
-        await sgMail.send(msg);
-        console.log(`✅ Verification email sent to: ${email}`);
-    } catch (error) {
-        console.error("❌ Error sending email:", error);
-    }
-};
