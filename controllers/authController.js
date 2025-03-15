@@ -13,36 +13,39 @@ const { sendVerificationEmail, sendWelcomeEmail } = require("../services/emailSe
  */
 exports.register = async (req, res) => {
     try {
-        const { username, email, password } = req.body; // Extract user details from the request
+        const { username, email, password } = req.body; // ✅ קבלת הנתונים מהטופס
 
-        // Check if a user with this email already exists
+        // ✅ בדיקה אם המשתמש כבר קיים
         let user = await User.findOne({ email });
         if (user) {
             return res.status(400).render("register", { error: "❌ User already exists!", user: null });
         }
 
-        // Hash the password before storing it in the database
+        // ✅ הצפנת הסיסמה
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        // Generate a verification token
-        const verificationToken = jwt.sign(
-            { userId: user._id, email: user.email },
-            process.env.JWT_SECRET,
-            { expiresIn: "1h" } // Token expires in 1 hour
-        );
-
-        // Create a new user instance (emailVerified set to false)
+        // ✅ יצירת משתמש חדש ושמירתו במסד הנתונים
         user = new User({ 
             username, 
             email, 
             password: hashedPassword, 
-            emailVerified: false, 
-            token: verificationToken // ✅ Save token in DB
+            emailVerified: false
         });
 
-        await user.save(); // Save user to database
+        await user.save(); // ✅ שומרים את המשתמש לפני שמשתמשים ב- `_id`
 
-        // ✅ Send verification email
+        // ✅ עכשיו יוצרים את ה- Token (אחרי שהמשתמש נשמר ויש לו _id)
+        const verificationToken = jwt.sign(
+            { userId: user._id, email: user.email },
+            process.env.JWT_SECRET,
+            { expiresIn: "1h" }
+        );
+
+        // ✅ עדכון ה- Token במסד הנתונים
+        user.token = verificationToken;
+        await user.save();
+
+        // ✅ שליחת מייל אימות
         sendVerificationEmail(user.email, verificationToken);
 
         console.log("✅ User registered. Token saved & verification email sent.");
@@ -53,6 +56,7 @@ exports.register = async (req, res) => {
         res.status(500).render("register", { error: "❌ Server error. Try again.", user: null });
     }
 };
+
 
 
 /**
