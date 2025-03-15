@@ -1,22 +1,36 @@
 <!-- ✅ Navigation Bar -->
 <nav class="navbar">
+
+    <!-- ✅ Social Media Icons Container  -->
     
-    <!-- ✅ Navigation Links Container -->
+<!-- ✅ Social Media Icons Container  -->
+<div class="social-icons">
+    
+    <a href="https://www.tiktok.com/" target="_blank" class="social-icon">
+        <i class="fab fa-tiktok"></i>
+    </a>
+    <a href="https://x.com/?lang=en" target="_blank" class="social-icon">
+        <i class="fab fa-twitter"></i>
+    </a>
+    <a href="https://www.instagram.com/accounts/emailsignup/" target="_blank" class="social-icon">
+        <i class="fab fa-instagram"></i>
+    </a>
+    <a href="https://discord.gg/VFtUbb9vKh" target="_blank" class="social-icon">
+        <i class="fab fa-discord"></i>
+    </a>
+</div>
+
+
+
+    <!-- ✅ Navigation Links Container (Centered) -->
     <div class="nav-links">
-        
-        <!-- ✅ Home button - redirects to homepage -->
         <a href="/" class="btn">Home</a> |
-        
-        <!-- ✅ Search button - redirects to search page -->
         <a href="/search" class="btn">Search</a> |
 
-        <!-- ✅ Dynamic content based on whether the user is logged in -->
         <% if (user) { %>
-            <!-- ✅ If user is logged in, show Profile & Logout options -->
             <a href="/profile" class="btn">Profile</a> |
             <a href="/auth/logout" class="btn">Logout</a>
         <% } else { %>
-            <!-- ✅ If user is NOT logged in, show Login & Register options -->
             <a href="/login" class="btn">Login</a> |
             <a href="/register" class="btn">Register</a>
         <% } %>
@@ -24,7 +38,6 @@
 
     <!-- ✅ Website Logo Container -->
     <div class="nav-logo">
-        <!-- ✅ Display the website logo -->
         <img src="/assets/logo.png" alt="AI Game Recommender">
     </div>
 
