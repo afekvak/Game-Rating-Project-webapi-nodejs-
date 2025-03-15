@@ -24,17 +24,23 @@
 
     <!-- ✅ Navigation Links Container (Centered) -->
     <div class="nav-links">
-        <a href="/" class="btn">Home</a> |
-        <a href="/search" class="btn">Search</a> |
-
+        <a href="/" class="btn">Home</a>
+        <span class="separator">|</span>
+        <a href="/search" class="btn">Search</a>
+    
         <% if (user) { %>
-            <a href="/profile" class="btn">Profile</a> |
+            <span class="separator">|</span>
+            <a href="/profile" class="btn">Profile</a>
+            <span class="separator">|</span>
             <a href="/auth/logout" class="btn">Logout</a>
         <% } else { %>
-            <a href="/login" class="btn">Login</a> |
+            <span class="separator">|</span>
+            <a href="/login" class="btn">Login</a>
+            <span class="separator">|</span>
             <a href="/register" class="btn">Register</a>
         <% } %>
     </div>
+    
 
     <!-- ✅ Website Logo Container -->
     <div class="nav-logo">
