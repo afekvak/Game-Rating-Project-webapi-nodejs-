@@ -24,10 +24,6 @@ exports.register = async (req, res) => {
         // Hash the password before storing it in the database
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        // Create a new user instance (emailVerified set to false)
-        user = new User({ username, email, password: hashedPassword, emailVerified: false });
-        await user.save(); // Save user to database
-
         // Generate a verification token
         const verificationToken = jwt.sign(
             { userId: user._id, email: user.email },
@@ -35,10 +31,21 @@ exports.register = async (req, res) => {
             { expiresIn: "1h" } // Token expires in 1 hour
         );
 
+        // Create a new user instance (emailVerified set to false)
+        user = new User({ 
+            username, 
+            email, 
+            password: hashedPassword, 
+            emailVerified: false, 
+            token: verificationToken // ✅ Save token in DB
+        });
+
+        await user.save(); // Save user to database
+
         // ✅ Send verification email
         sendVerificationEmail(user.email, verificationToken);
 
-        console.log("✅ User registered. Verification email sent.");
+        console.log("✅ User registered. Token saved & verification email sent.");
         res.render("register", { error: "📧 Please check your email to verify your account!", user: null });
 
     } catch (error) {
@@ -46,6 +53,7 @@ exports.register = async (req, res) => {
         res.status(500).render("register", { error: "❌ Server error. Try again.", user: null });
     }
 };
+
 
 /**
  * Handles email verification
