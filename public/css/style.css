@@ -1,7 +1,6 @@
-/* 🌌 General Styles */
-body {
+html, body {
     font-family: 'Poppins', sans-serif;
-    background: linear-gradient(90deg, #1a1a2e, #0f3460); /* ✅ Ensures the whole page has the same gradient */
+    background: linear-gradient(90deg, #1a1a2e, #0f3460); /* ✅ Unified background */
     color: #eaeaea;
     margin: 0;
     padding: 0;
@@ -10,7 +9,8 @@ body {
     align-items: center;
     flex-direction: column;
     min-height: 100vh;
-    width: 100vw; /* ✅ Ensures full width coverage */
+    width: 100%; /* ✅ FIXED: Prevents horizontal overflow */
+    overflow-x: hidden; /* ✅ FIXED: Stops horizontal scrolling issue */
 }
 
 /* 🎮 Page Container */
@@ -468,7 +468,7 @@ h2 {
 
 /* 🏆 Navbar */
 .navbar {
-    background: linear-gradient(90deg, #1a1a2e, #0f3460); /* ✅ Ensures it matches the body & container */
+    background: transparent; /* ✅ Ensures it matches the body & container */
     padding: 20px;
     border-radius: 0; /* ✅ Removes rounded edges to blend with page */
     width: 100vw; /* ✅ Ensures full width */
