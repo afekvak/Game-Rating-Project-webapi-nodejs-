@@ -31,7 +31,8 @@
             <!-- ✅ Game description and details -->
             <div class="game-description">
                 <p><strong>🎮 Genre:</strong> <%= game.genre %></p>
-                <p><strong>⭐ Average Rating:</strong> <%= game.averageRating %></p>
+                <p><strong>⭐ Average Rating:</strong> <%= averageRating.toFixed(1) %></p>
+
                 <p><%= game.description %></p>
             </div>
 
@@ -81,20 +82,21 @@
                 document.getElementById("ratingForm").addEventListener("submit", async (e) => {
                     e.preventDefault(); // ✅ Prevent form from refreshing the page
                     const rating = document.getElementById("rating").value; // ✅ Get selected rating value
-
+            
                     // ✅ Send rating data to the server
                     const response = await fetch("/ratings/submit", {
                         method: "POST",
                         headers: {
                             "Content-Type": "application/json"
                         },
-                        body: JSON.stringify({ gameId: "<%= game.id %>", rating })
+                        body: JSON.stringify({ gameId: "<%= game.rawgId %>", rating }) // ✅ FIXED: use rawgId instead of game.id
                     });
-
+            
                     const data = await response.json(); // ✅ Convert response to JSON
                     alert(data.message); // ✅ Show success or error message
                 });
             </script>
+            
 
             <% if (game.stores) { %>
                 <!-- ✅ Button to check where to buy the game -->

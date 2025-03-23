@@ -1,84 +1,57 @@
-// ✅ Import required modules
-const User = require('../models/User'); // Import the User model to interact with the users collection in the database
-const Rating = require('../models/Rating'); // Import the Rating model to interact with the ratings collection
-const axios = require('axios'); // Import Axios for making HTTP requests (used for fetching game data from an API)
-const bcrypt = require('bcryptjs'); // Import bcrypt.js for password hashing
-const RAWG_API_KEY = process.env.RAWG_API_KEY; // Retrieve the API key for RAWG from environment variables
+const User = require('../models/User');
+const Rating = require('../models/Rating');
+const Game = require('../models/Game'); // ✅ נוסיף גם את המודל Game
+const axios = require('axios');
+const bcrypt = require('bcryptjs');
 
-// ✅ Function to render user profile
 exports.renderProfile = async (req, res) => {
     try {
         console.log("✅ Fetching profile for user:", req.user ? req.user._id : "undefined");
 
-        // ✅ Find the user by their ID (extracted from the request object)
         const user = await User.findById(req.user._id);
         if (!user) {
             console.log("❌ User not found in database.");
-            return res.redirect('/login'); // If user doesn't exist, redirect to login page
+            return res.redirect('/login');
         }
 
         console.log("✅ User found:", user.username);
 
-        // ✅ Fetch last visited games
+        // ✅ Fetch recent games from your local DB by rawgId
         let recentGames = [];
         if (user.lastVisitedGames && user.lastVisitedGames.length > 0) {
-            // Loop through last visited game IDs and fetch game details from RAWG API
-            recentGames = await Promise.all(user.lastVisitedGames.map(async (gameId) => {
-                try {
-                    const response = await axios.get(`https://api.rawg.io/api/games/${gameId}`, {
-                        params: { key: process.env.RAWG_API_KEY } // Send API key as a query parameter
-                    });
-                    return {
-                        id: response.data.id, // Store game ID
-                        name: response.data.name, // Store game name
-                        image: response.data.background_image // Store game image URL
-                    };
-                } catch (error) {
-                    console.error(`❌ Error fetching game data for ${gameId}:`, error.message);
-                    return null; // Return null for games that failed to fetch
-                }
-            }));
-            recentGames = recentGames.filter(game => game !== null); // Remove null values from the array
+            const games = await Game.find({ rawgId: { $in: user.lastVisitedGames } });
+
+            // סדר לפי הסדר ב-user.lastVisitedGames
+            recentGames = user.lastVisitedGames.map(id =>
+                games.find(g => g.rawgId === id)
+            ).filter(game => game); // הסר null
         }
 
-        // ✅ Fetch user ratings from the database
-        const ratings = await Rating.find({ user: user._id });
+        // ✅ Get ratings and populate game info
+        const ratings = await Rating.find({ user: user._id }).populate("game");
 
-        // ✅ Fetch Game Names for Ratings
-        const ratingsWithNames = await Promise.all(ratings.map(async (rating) => {
-            try {
-                // Fetch game details from RAWG API using game ID stored in the rating document
-                const response = await axios.get(`https://api.rawg.io/api/games/${rating.gameId}`, {
-                    params: { key: process.env.RAWG_API_KEY }
-                });
-
-                return {
-                    _id: rating._id, // Keep rating ID
-                    gameId: rating.gameId, // Store game ID
-                    gameName: response.data.name || "Unknown Game", // Store game name (fallback to "Unknown Game" if not found)
-                    rating: rating.rating // Store user rating
-                };
-            } catch (error) {
-                console.error(`❌ Error fetching game name for rating ${rating.gameId}:`, error.message);
-                return {
-                    _id: rating._id,
-                    gameId: rating.gameId,
-                    gameName: "Unknown Game", // Set game name as "Unknown Game" in case of error
-                    rating: rating.rating
-                };
-            }
-        }));
-
-        // ✅ Render the profile page and pass the user data & ratings
-        res.render('profile', {
-            user: { ...user.toObject(), recentGames }, // Convert Mongoose document to object and include recentGames
-            ratings: ratingsWithNames // Pass ratings with game names
+        const ratingsWithNames = ratings.map(rating => {
+            const game = rating.game;
+            return {
+                _id: rating._id,
+                gameId: game.rawgId || "N/A",
+                gameName: game.name || "Unknown Game",
+                rating: rating.rating
+            };
         });
+
+        // ✅ Render profile
+        res.render('profile', {
+            user: { ...user.toObject(), recentGames },
+            ratings: ratingsWithNames
+        });
+
     } catch (error) {
         console.error("❌ Error fetching profile data:", error);
-        res.redirect('/login'); // Redirect to login page in case of error
+        res.redirect('/login');
     }
 };
+
 
 // ✅ Update Profile Picture
 exports.updateProfilePhoto = async (req, res) => {

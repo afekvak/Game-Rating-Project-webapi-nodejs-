@@ -1,12 +1,12 @@
-// ✅ Import Mongoose
 const mongoose = require('mongoose');
 
-// ✅ Define schema for storing user ratings
 const RatingSchema = new mongoose.Schema({
-    user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }, // ✅ Reference to the User model (who gave the rating)
-    gameId: { type: String, required: true }, // ✅ Store the game ID from RAWG API or manually added games
-    rating: { type: Number, required: true, min: 1, max: 5 } // ✅ Ensure rating is between 1 and 5
-});
+    user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }, // ✅ Reference to the User model
+    game: { type: mongoose.Schema.Types.ObjectId, ref: 'Game', required: true }, // ✅ Reference to the Game model
+    rating: { type: Number, required: true, min: 1, max: 5 } // ✅ Ratings must be between 1-5
+}, { timestamps: true }); // ✅ Auto-created timestamps
 
-// ✅ Export the Rating model
+// ✅ Prevent duplicate ratings per user for the same game
+RatingSchema.index({ user: 1, game: 1 }, { unique: true });
+
 module.exports = mongoose.model('Rating', RatingSchema);
