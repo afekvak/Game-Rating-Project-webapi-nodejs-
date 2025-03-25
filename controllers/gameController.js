@@ -106,33 +106,34 @@ exports.getExploreGames = async (req, res) => {
 
 exports.getGameInfo = async (gameId, userId) => {
     try {
-        // ✅ Check if game exists in your database
-        let game = await Game.findOne({ rawgId: gameId });
+        const rawgId = String(gameId); // ודא שה-id הוא מחרוזת
+        console.log("📥 getGameInfo called with gameId:", rawgId, "| userId:", userId);
+
+        // ✅ Try to find the game in DB
+        let game = await Game.findOne({ rawgId });
 
         if (game) {
             console.log(`✅ Game found in database: ${game.name}`);
         } else {
             console.log(`🔍 Game not found in database. Fetching from RAWG API...`);
 
-            // ✅ Fetch game details from RAWG API
-            const response = await axios.get(`https://api.rawg.io/api/games/${gameId}`, {
+            const response = await axios.get(`https://api.rawg.io/api/games/${rawgId}`, {
                 params: { key: RAWG_API_KEY }
             });
 
             if (!response.data || !response.data.id) {
-                console.error(`❌ Game not found for ID: ${gameId}`);
+                console.error(`❌ Game not found for ID: ${rawgId}`);
                 return null;
             }
 
             const gameData = response.data;
 
-            // ✅ Fetch Trailer & Gameplay from YouTube
-            console.log(`🎥 Fetching YouTube trailer and gameplay for "${gameData.name}"...`);
+            // ✅ Fetch YouTube trailer & gameplay
             const trailer = await fetchYouTubeVideo(gameData.name, "trailer");
             const gameplay = await fetchYouTubeVideo(gameData.name, "gameplay");
 
-            // ✅ Fetch Store Links from RAWG API
-            const storeResponse = await axios.get(`https://api.rawg.io/api/games/${gameId}/stores`, {
+            // ✅ Fetch Store Links
+            const storeResponse = await axios.get(`https://api.rawg.io/api/games/${rawgId}/stores`, {
                 params: { key: RAWG_API_KEY }
             });
 
@@ -141,9 +142,9 @@ exports.getGameInfo = async (gameId, userId) => {
                 url: store.url
             }));
 
-            // ✅ Construct new game object for database
+            // ✅ Create new game and save
             game = new Game({
-                rawgId: gameData.id,
+                rawgId: String(gameData.id),
                 name: gameData.name || "Unknown Game",
                 description: gameData.description_raw || "No description available.",
                 genre: gameData.genres?.map(g => g.name).join(", ") || "Unknown",
@@ -153,26 +154,35 @@ exports.getGameInfo = async (gameId, userId) => {
                 stores: storeLinks.length > 0 ? storeLinks : [],
             });
 
-            await game.save(); // ✅ Save the game in the database
+            await game.save();
             console.log(`✅ Game saved in database: ${game.name}`);
         }
 
-        // ✅ Update last viewed games for logged-in user
-        if (userId) {
-            console.log(`🔄 Updating last viewed games for user: ${userId}`);
+        console.log("🔎 typeof game.rawgId:", typeof game.rawgId, "| value:", game.rawgId);
 
-            if (mongoose.Types.ObjectId.isValid(userId)) {
-                const user = await User.findById(userId);
-                if (user) {
-                    let lastGames = user.lastVisitedGames || [];
-                    lastGames = lastGames.filter(id => id !== game.rawgId); // Remove duplicates
-                    lastGames.unshift(game.rawgId); // Add new game at the start
-                    lastGames = lastGames.slice(0, 5); // Keep only last 5 games
+        // ✅ Update user's last viewed games
+        if (userId && mongoose.Types.ObjectId.isValid(userId)) {
+            const user = await User.findById(userId);
+            if (user) {
+                let lastGames = user.lastVisitedGames?.map(String) || [];
 
-                    await User.findByIdAndUpdate(userId, { lastVisitedGames: lastGames });
-                    console.log(`✅ Last viewed games updated for ${user.username}`);
-                }
+                // הסר אם כבר קיים
+                lastGames = lastGames.filter(id => id !== String(game.rawgId));
+
+                // הוסף לראש
+                lastGames.unshift(String(game.rawgId));
+
+                // שמור עד 5
+                lastGames = lastGames.slice(0, 5);
+
+                await User.findByIdAndUpdate(userId, { lastVisitedGames: lastGames });
+
+                console.log(`✅ Last viewed games updated for ${user.username}:`, lastGames);
+            } else {
+                console.warn(`⚠️ No user found with ID ${userId}`);
             }
+        } else {
+            console.warn(`⚠️ No valid userId provided. Skipping lastViewedGames update.`);
         }
 
         return game;
@@ -198,33 +208,31 @@ exports.getGameInfo = async (gameId, userId) => {
 exports.renderGameInfo = async (req, res) => {
     try {
         const referer = req.headers.referer;
-        let backPage = "explore"; // Default back button destination
+        let backPage = "explore";
 
         if (referer) {
             if (referer.endsWith("/")) backPage = "home";
             if (referer.includes("/games/explore")) backPage = "explore";
         }
 
-        const userId = req.user && req.user._id ? req.user._id : null;
+        const userId = req.user?.userId || req.user?._id || null;
+
         console.log(`🔄 User ${userId ? userId : "Guest"} is viewing game ID: ${req.params.id}`);
 
-        // ✅ Fetch game details (either from DB or RAWG API)
+        // ✅ FIX: שלח את userId שכבר הגדרת
         const game = await exports.getGameInfo(req.params.id, userId);
 
         if (!game) {
             return res.status(404).render('game-info', { game: null, referer: backPage, averageRating: 0 });
         }
 
-        // ✅ Fetch ratings from `RatingSchema`
         const ratings = await Rating.find({ game: game._id });
 
-        // ✅ Calculate Average Rating dynamically
         const totalRatings = ratings.length;
-        const averageRating = totalRatings > 0 
-            ? (ratings.reduce((sum, r) => sum + r.rating, 0) / totalRatings) 
+        const averageRating = totalRatings > 0
+            ? (ratings.reduce((sum, r) => sum + r.rating, 0) / totalRatings)
             : 0;
 
-        // ✅ Render the game-info page with the fetched data
         res.render('game-info', { game, referer: backPage, averageRating });
 
     } catch (error) {
