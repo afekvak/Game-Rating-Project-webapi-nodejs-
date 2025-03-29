@@ -1,23 +1,18 @@
 // ✅ Import required modules
 const axios = require('axios'); // Import Axios to make HTTP requests
-const { getPopularGames } = require('../controllers/gameController'); // Import function to fetch popular games
+const { getTopRatedGames } = require('../controllers/gameController'); // Import function to fetch popular games
 const RAWG_API_KEY = process.env.RAWG_API_KEY; // Retrieve RAWG API key from environment variables
 
-// ✅ Function to render the Home Page
+
+
 exports.renderHome = async (req, res) => {
-    try {
-        // ✅ Fetch popular games from the RAWG API using a helper function
-        const popularGames = await getPopularGames();
-
-        // ✅ Render the home page and pass user data and popular games
-        res.render('home', { user: res.locals.user || null, popularGames });
-    } catch (error) {
-        console.error("❌ Error loading home page:", error);
-
-        // ✅ In case of an error, render the home page with an empty popularGames array
-        res.render('home', { user: res.locals.user || null, popularGames: [] });
-    }
+    const popularGames = await getTopRatedGames();
+    res.render('home', {
+        user: req.user,
+        popularGames
+    });
 };
+
 
 // ✅ Function to render the Register Page
 exports.renderRegister = (req, res) => {

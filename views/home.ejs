@@ -1,41 +1,122 @@
 <!-- ✅ Include the head section -->
 <%- include('partials/head') %>
 
-<body>
-    <!-- ✅ Include the navigation bar -->
-    <%- include('partials/navbar') %>
+    <body>
+        <!-- ✅ Include the navigation bar -->
+        <%- include('partials/navbar') %>
 
-    <!-- ✅ Main container for homepage content -->
-    <div class="container">
-        <h1>🎮 Welcome to AI Game Recommender</h1>
-        <p>Find the best games with AI-powered recommendations!</p>
+            <!-- ✅ Main container for homepage content -->
+            <div class="container">
+                <h1>🎮 Welcome to AI Game Recommender</h1>
+                <p>Find the best games with AI-powered recommendations!</p>
 
-        <!-- ✅ Explore games button -->
-        <a href="/games/explore" class="btn">🕹️ Explore Games</a>
+                <!-- ✅ Explore games button -->
+                <a href="/games/explore" class="btn">🕹️ Explore Games</a>
 
-        <% if (user) { %>
-            <!-- ✅ Show user-specific options if logged in -->
-            <a href="/profile" class="btn">🔹 My Profile</a>
-            <a href="/recommendations" class="btn">🌟 Recommended for You</a>
-        <% } %>
+                <% if (user) { %>
+                    <!-- ✅ Show user-specific options if logged in -->
+                    <a href="/profile" class="btn">🔹 My Profile</a>
+                    <a href="/recommendations" class="btn">🌟 Recommended for You</a>
+                    <% } %>
 
-        <!-- ✅ Most popular games section -->
-        <div class="top-games-section">
-            <h2>🔥 Most Popular Games</h2>
-            <div class="top-games-gallery">
-                <% popularGames.forEach(game => { %>
-                    <div class="top-game-card">
-                        <img src="<%= game.image %>" alt="<%= game.name %>">
-                        <h3><%= game.name %></h3>
-                        <p>⭐ Rating: <%= game.rating %></p>
-                        <a href="/games/game-info/<%= game.id %>" class="btn">📜 View Details</a>
-                    </div>
-                <% }) %>
-            </div>
-        </div>
-    </div>
+                        <!-- ✅ Top Rated Games Section -->
+                        <div class="top-games-section">
 
-    <!-- ✅ Include the footer section -->
-    <%- include('partials/footer') %>
-</body>
-</html>
+                            <h2 class="top-rated-title">🔥 Top Rated Games</h2>
+
+
+                            <!-- ✅ Swiper container -->
+                            <!-- ✅ Swiper container -->
+                            <div class="swiper mySwiper">
+                                <!-- ✅ Slides wrapper -->
+                                <div class="swiper-wrapper">
+                                    <% popularGames.forEach(game=> { %>
+                                        <div class="swiper-slide">
+                                            <div
+                                                class="top-game-card <%= game.rating === 'N/A' ? 'placeholder' : '' %>">
+                                                <img src="<%= game.image %>" alt="<%= game.name %>">
+                                                <% if (game.trailer) { %>
+                                                    <div class="video-wrapper" style="display: none;">
+                                                      <iframe 
+                                                        src="<%= game.trailer.replace('watch?v=', 'embed/') %>?autoplay=1&mute=1&controls=0&rel=0&showinfo=0" 
+                                                        frameborder="0" 
+                                                        allow="autoplay; encrypted-media" 
+                                                        allowfullscreen
+                                                      ></iframe>
+                                                    </div>
+                                                  <% } %>
+                                                  
+                                                <h3>
+                                                    <%= game.name %>
+                                                </h3>
+                                                <% if (game.rating !=='N/A' ) { %>
+                                                    <p>⭐ Rating: <%= game.rating %>
+                                                            (<%= game.totalRatings %> ratings)</p>
+                                                    <a href="/games/game-info/<%= game.id %>" class="btn">📜 Game Details</a>
+                                                    <% } else { %>
+                                                        <p>⭐ Rating: N/A</p>
+                                                        <button class="btn disabled" disabled>Coming Soon</button>
+                                                        <% } %>
+                                            </div>
+                                        </div>
+                                        <% }) %>
+                                </div>
+
+                                <!-- ✅ Navigation -->
+                                <div class="swiper-button-next"></div>
+                                <div class="swiper-button-prev"></div>
+
+                                <!-- ✅ Pagination bullets -->
+                                <div class="swiper-pagination"></div>
+                            </div>
+
+                        </div>
+
+                        <!-- ✅ Include the footer section -->
+                        <%- include('partials/footer') %>
+
+                            <!-- ✅ Swiper JS -->
+                            <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+                            <!-- Init Swiper -->
+                            <script>
+                                const swiper = new Swiper(".mySwiper", {
+                                    slidesPerView: 1.3,
+                                    centeredSlides: true,
+                                    spaceBetween: 20,
+                                    loop: true,
+                                    autoplay: {
+                                        delay: 4000,
+                                        disableOnInteraction: false,
+                                    },
+                                    navigation: {
+                                        nextEl: ".swiper-button-next",
+                                        prevEl: ".swiper-button-prev",
+                                    },
+                                    pagination: {
+                                        el: ".swiper-pagination",
+                                        clickable: true,
+                                    },
+                                    breakpoints: {
+                                        768: {
+                                            slidesPerView: 1.5,
+                                        },
+                                        1024: {
+                                            slidesPerView: 1.6,
+                                        },
+                                    }
+                                });
+
+
+
+
+
+
+
+
+                            </script>
+                            <script src="/js/caroselaVideo.js"></script>
+                            
+    </body>
+
+    </html>

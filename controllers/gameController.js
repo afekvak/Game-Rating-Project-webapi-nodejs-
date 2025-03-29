@@ -30,33 +30,59 @@ const STORE_NAMES = {
  */
 exports.getExploreGames = async (req, res) => {
     try {
-        const page = parseInt(req.query.page) || 1; // Get current page, default to 1
+        const page = parseInt(req.query.page) || 1;
+
+        // ✅ שליפה מ-RAWG API
         const response = await axios.get(`https://api.rawg.io/api/games`, {
             params: { key: RAWG_API_KEY, page_size: 12, page: page }
         });
 
-        // Map the fetched games into a cleaner format
-        const games = response.data.results.map(game => ({
-            id: game.id,
-            name: game.name,
-            image: game.background_image || "https://via.placeholder.com/200x300?text=No+Image"
-        }));
+        const rawgGames = response.data.results;
 
-        console.log("🔍 Current User in explore:", req.user); // Debugging user info
+        // ✅ שלוף דירוגים מקומיים עם המידע על המשחקים
+        const allRatings = await Rating.find().populate("game");
 
-        // ✅ If it's an AJAX request, return JSON instead of rendering a page
+        // ✅ בנה מיפוי של דירוגים לפי rawgId
+        const ratingMap = {};
+        allRatings.forEach(rating => {
+            const rawgId = rating.game?.rawgId?.toString();
+            if (!rawgId) return; // אם אין rawgId – תדלג
+            if (!ratingMap[rawgId]) ratingMap[rawgId] = [];
+            ratingMap[rawgId].push(rating.rating);
+        });
+
+        // ✅ הכנס את הדירוגים למערך המשחקים מ-RAWG
+        const games = rawgGames.map(game => {
+            const ratings = ratingMap[game.id.toString()] || [];
+            const totalRatings = ratings.length;
+            const averageRating = totalRatings > 0
+                ? (ratings.reduce((sum, r) => sum + r, 0) / totalRatings).toFixed(1)
+                : 'N/A';
+
+            return {
+                id: game.id,
+                name: game.name,
+                image: game.background_image || "https://via.placeholder.com/200x300?text=No+Image",
+                rating: averageRating,
+                totalRatings: totalRatings
+            };
+        });
+
+        // ✅ אם זו בקשה דרך AJAX
         if (req.xhr || req.headers.accept.indexOf('json') > -1) {
             return res.json({ games });
         }
 
-        // Render the explore page with game data
+        // ✅ טען את עמוד Explore
         res.render("explore", { games, user: req.user || null });
 
     } catch (error) {
-        console.error("❌ Error fetching games from RAWG:", error);
+        console.error("❌ Error fetching games from RAWG:", error.message);
         res.status(500).json({ error: "Error fetching games" });
     }
 };
+
+
 
 
 // better function (for saving games requires better youtube api )
@@ -216,14 +242,12 @@ exports.renderGameInfo = async (req, res) => {
         }
 
         const userId = req.user?.userId || req.user?._id || null;
-
         console.log(`🔄 User ${userId ? userId : "Guest"} is viewing game ID: ${req.params.id}`);
 
-        // ✅ FIX: שלח את userId שכבר הגדרת
         const game = await exports.getGameInfo(req.params.id, userId);
 
         if (!game) {
-            return res.status(404).render('game-info', { game: null, referer: backPage, averageRating: 0 });
+            return res.status(404).render('game-info', { game: null, referer: backPage, averageRating: 0, totalRatings: 0 });
         }
 
         const ratings = await Rating.find({ game: game._id });
@@ -233,13 +257,19 @@ exports.renderGameInfo = async (req, res) => {
             ? (ratings.reduce((sum, r) => sum + r.rating, 0) / totalRatings)
             : 0;
 
-        res.render('game-info', { game, referer: backPage, averageRating });
+        res.render('game-info', {
+            game,
+            referer: backPage,
+            averageRating,
+            totalRatings
+        });
 
     } catch (error) {
         console.error("❌ Error rendering game info:", error);
-        res.status(500).render('game-info', { game: null, referer: "explore", averageRating: 0 });
+        res.status(500).render('game-info', { game: null, referer: "explore", averageRating: 0, totalRatings: 0 });
     }
 };
+
 
 
 
@@ -284,27 +314,57 @@ exports.getGameStores = async (req, res) => {
  * - Retrieves the most popular games based on number of additions.
  * - Returns a list of games with name, ID, image, and rating.
  */
-exports.getPopularGames = async () => {
+
+exports.getTopRatedGames = async () => {
     try {
-        // ✅ Fetch the most popular games
-        const response = await axios.get(`https://api.rawg.io/api/games`, {
-            params: {
-                key: RAWG_API_KEY, // Use RAWG API key
-                ordering: "-added", // Sort by most added games
-                page_size: 12 // Limit the number of results
+        // 🧠 שלוף את כל הדירוגים + המשחקים הקשורים
+        const ratings = await Rating.find().populate('game');
+
+        // 🧮 צור מיפוי של משחקים עם סכום דירוגים ומספר מדרגים
+        const gameStats = {};
+
+        for (const rating of ratings) {
+            const game = rating.game;
+            if (!game || !game._id) continue;
+
+            const id = game._id.toString();
+
+            if (!gameStats[id]) {
+                gameStats[id] = {
+                    id: game.rawgId,
+                    name: game.name,
+                    image: game.image,
+                    trailer: game.trailer || null, // ✅ הוספת לינק לווידאו אם קיים
+                    totalRatings: 0,
+                    sumRatings: 0
+                };
             }
+
+            gameStats[id].totalRatings++;
+            gameStats[id].sumRatings += rating.rating;
+        }
+
+        // ✨ הפוך את המיפוי לרשימה עם ממוצע דירוג
+        const gamesWithAvg = Object.values(gameStats).map(game => {
+            const avg = game.sumRatings / game.totalRatings;
+            return {
+                id: game.id,
+                name: game.name,
+                image: game.image,
+                trailer: game.trailer, // ✅ נוסיף גם בהחזרה
+                rating: avg.toFixed(1),
+                totalRatings: game.totalRatings
+            };
         });
 
-        // ✅ Process and return the game list
-        return response.data.results.map(game => ({
-            id: game.id,
-            name: game.name,
-            image: game.background_image,
-            rating: game.rating
-        }));
+        // 🔝 מיין לפי ממוצע דירוג ותחזיר רק 20
+        return gamesWithAvg
+            .sort((a, b) => b.rating - a.rating)
+            .slice(0, 20);
 
     } catch (error) {
-        console.error("❌ Error fetching popular games:", error);
-        return []; // Return an empty array in case of an error
+        console.error("❌ Error getting top rated games:", error);
+        return [];
     }
 };
+
