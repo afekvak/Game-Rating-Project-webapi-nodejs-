@@ -1,0 +1,105 @@
+/* 🏆 Navbar */
+.navbar {
+    background: transparent; /* ✅ Ensures it matches the body & container */
+    padding: 20px;
+    border-radius: 0; /* ✅ Removes rounded edges to blend with page */
+    width: 100vw; /* ✅ Ensures full width */
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap; /* ✅ Prevents stacking */
+    position: relative;
+}
+
+/* 🔗 Navigation Links (Centered) */
+.nav-links {
+    flex-grow: 1;
+    text-align: center;
+    display: flex; /* ✅ Makes sure buttons stay in a row */
+    justify-content: center;
+    gap: 5px; /* ✅ Ensures even spacing */
+    flex-wrap: wrap; /* ✅ Prevents stacking */
+}
+
+
+/* 🎮 AI Game Recommender Logo */
+.nav-logo {
+    position: absolute;
+    right: 100px; /* ✅ Keeps it on the right */
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.nav-logo img {
+    height: 124px;
+    transition: transform 0.3s ease-in-out;
+}
+
+/* ✅ Social Media Icons (Further Left & No Background) */
+.social-icons {
+    display: flex;
+    gap: 15px;  /* ✅ Increases spacing */
+    position: absolute;
+    left: 180px; /* ✅ Moves icons further left */
+    top: 50%;
+    flex-shrink: 0;
+    transform: translateY(-50%);
+}
+
+.social-icon {
+    text-decoration: none;
+    font-size: 25px;
+    color: rgba(71, 128, 198, 0.831);
+    transition: color 0.3s ease-in-out, transform 0.3s ease-in-out;
+}
+
+/* ✅ Hover Effect */
+.social-icon:hover {
+    color: white;
+    transform: scale(1.2);
+}
+
+/* ✅ Responsive Navbar for Mobile */
+@media (max-width: 1024px) {
+    .navbar {
+        flex-direction: column; /* ✅ Stacks items neatly on smaller screens */
+        padding: 15px;
+    }
+
+    .nav-links {
+        flex-direction: row; /* ✅ Keeps buttons in one row */
+        flex-wrap: wrap; /* ✅ Prevents ugly stacking */
+        justify-content: center;
+        gap: 10px;
+        margin-top: 10px;
+    }
+
+    .social-icons {
+        position: static; /* ✅ Moves to a normal flow in mobile */
+        justify-content: center;
+        margin-top: 10px;
+    }
+
+    .nav-logo {
+        position: static; /* ✅ Moves into normal flow */
+        transform: none;
+        margin-top: 10px;
+    }
+
+    .nav-logo img {
+        height: 100px; /* ✅ Adjust size for smaller screens */
+    }
+}
+
+/* ✅ Fix for | Separators */
+.separator {
+    color: white; /* ✅ Matches navbar theme */
+    font-size: 18px;
+    font-weight: bold;
+    margin: 0 8px; /* ✅ Ensures even spacing */
+    display: flex;
+    align-items: center; /* ✅ Centers the | vertically */
+}
+
+
+

@@ -1,0 +1,123 @@
+/* 🌌 Search Page Styles */
+.search-container {
+    text-align: center;
+    max-width: 600px;
+    margin: 50px auto;
+    background: transparent; /* ✅ Matches body & navbar */
+    padding: 30px;
+    border-radius: 15px;
+    animation: fadeIn 1s ease-in-out;
+    box-shadow: none; /* ✅ Removes floating effect */
+}
+
+/* 🔎 Search Title */
+.search-title {
+    color: #f5a425;
+    font-size: 2rem;
+    margin-bottom: 15px;
+    text-shadow: 0px 0px 10px rgba(245, 164, 37, 0.7);
+}
+
+/* 🎯 Search Box */
+.search-box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    padding: 12px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px rgba(0, 255, 255, 0.2);
+    transition: box-shadow 0.3s ease-in-out;
+}
+
+/* 🔠 Search Input */
+#searchInput {
+    width: 80%;
+    padding: 12px;
+    font-size: 1rem;
+    border: 2px solid transparent;
+    background: black;
+    color: #f5a425;
+    border-radius: 5px;
+    outline: none;
+    transition: all 0.3s ease-in-out;
+}
+
+/* ✨ Glowing Effect on Focus */
+#searchInput:focus {
+    border-color: #f5a425;
+    box-shadow: 0px 0px 8px rgba(245, 164, 37, 0.7);
+}
+
+/* 🔍 Search Button */
+.search-btn {
+    background: linear-gradient(135deg, #f5a425, #ffcc29);
+    color: black;
+    padding: 12px 15px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.2s;
+    margin-left: 10px;
+}
+
+.search-btn:hover {
+    background: linear-gradient(135deg, #ffcc29, #f5a425);
+    transform: scale(1.1);
+}
+
+/* 🎇 Enhanced Glowing Suggestions Box */
+.suggestions-list {
+    list-style: none;
+    padding: 0;
+    margin: 10px auto;
+    background: rgba(0, 0, 0, 0.95);
+    border-radius: 5px;
+    box-shadow: 0px 0px 12px rgba(0, 255, 255, 0.3);
+    max-width: 400px;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+}
+
+/* 🎭 Make it Fade In */
+.suggestions-list.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* 🎯 Suggestions Items */
+.suggestions-list li {
+    padding: 12px;
+    color: #f5a425;
+    cursor: pointer;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    transition: background 0.2s ease-in-out, transform 0.2s ease-in-out;
+}
+
+/* 🟡 Hover Effect */
+.suggestions-list li:hover {
+    background: rgba(255, 204, 41, 0.2);
+    transform: scale(1.05);
+}
+
+/* ❌ Error Message */
+.error-message {
+    color: red;
+    font-size: 1rem;
+    margin-top: 10px;
+}
+
+/* 🎭 Fade-In Animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

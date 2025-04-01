@@ -1,8 +1,10 @@
 const User = require('../models/User');
 const Rating = require('../models/Rating');
 const Game = require('../models/Game'); // ✅ נוסיף גם את המודל Game
-const axios = require('axios');
 const bcrypt = require('bcryptjs');
+const { cloudinary } = require('../services/cloudinaryCloud');
+const streamifier = require('streamifier');
+
 
 exports.renderProfile = async (req, res) => {
     try {
@@ -56,14 +58,32 @@ exports.renderProfile = async (req, res) => {
 // ✅ Update Profile Picture
 exports.updateProfilePhoto = async (req, res) => {
     try {
-        // Update user's profile picture in the database
-        await User.findByIdAndUpdate(req.user._id, { profilePicture: req.body.photoUrl });
-        res.redirect('/profile'); // Redirect back to profile after update
+        const streamUpload = (buffer) => {
+            return new Promise((resolve, reject) => {
+                const stream = cloudinary.uploader.upload_stream(
+                    { folder: "profile_pictures" },
+                    (error, result) => {
+                        if (result) resolve(result);
+                        else reject(error);
+                    }
+                );
+                streamifier.createReadStream(buffer).pipe(stream);
+            });
+        };
+
+        const result = await streamUpload(req.file.buffer);
+
+        await User.findByIdAndUpdate(req.user._id, {
+            profilePicture: result.secure_url
+        });
+
+        res.redirect('/profile');
     } catch (error) {
-        console.error("❌ Error updating photo:", error);
-        res.redirect('/profile'); // Redirect in case of error
+        console.error("❌ Error uploading profile photo:", error);
+        res.redirect('/profile');
     }
 };
+
 
 // ✅ Update Username
 exports.updateUserInfo = async (req, res) => {
@@ -100,5 +120,80 @@ exports.removeRating = async (req, res) => {
     } catch (error) {
         console.error("❌ Error removing rating:", error);
         res.redirect('/profile'); // Redirect in case of error
+    }
+};
+
+exports.renderEditProfile = async (req, res) => {
+    try {
+        const user = await User.findById(req.user._id);
+        if (!user) return res.redirect('/login');
+
+        res.render('edit-profile', { user, error: null, success: null });
+    } catch (error) {
+        console.error("❌ Error rendering edit profile:", error);
+        res.redirect('/profile');
+    }
+};
+
+
+exports.updateFullProfile = async (req, res) => {
+    try {
+        const { fullName, phone, birthday, username, password, favoriteGenre } = req.body;
+        const updates = { fullName, phone, birthday, username, favoriteGenre };
+
+        // 📵 ולידציית טלפון
+        if (phone && !/^\d{9,10}$/.test(phone)) {
+            return res.render("edit-profile", {
+                user: { ...req.body },
+                error: "📵 Invalid phone number format!"
+            });
+        }
+
+        // 🔐 ולידציית סיסמה
+        if (password && password.trim() !== "") {
+            const strongPasswordRegex = /^(?=.*[A-Z])(?=.*\d).{6,}$/;
+            if (!strongPasswordRegex.test(password)) {
+                return res.render("edit-profile", {
+                    user: { ...req.body },
+                    error: "🔐 Password must be at least 6 characters, include a number and an uppercase letter."
+                });
+            }
+
+            const hashedPassword = await bcrypt.hash(password, 10);
+            updates.password = hashedPassword;
+        }
+
+        // 📷 אם יש תמונה חדשה – העלאה ל-Cloudinary
+        if (req.file) {
+            const streamUpload = (buffer) => {
+                return new Promise((resolve, reject) => {
+                    const stream = cloudinary.uploader.upload_stream(
+                        { folder: "profile_pictures" },
+                        (error, result) => {
+                            if (result) resolve(result);
+                            else reject(error);
+                        }
+                    );
+                    streamifier.createReadStream(buffer).pipe(stream);
+                });
+            };
+
+            const result = await streamUpload(req.file.buffer);
+            updates.profilePicture = result.secure_url;
+        }
+
+        // ✅ עדכון במסד
+        await User.findByIdAndUpdate(req.user._id, updates);
+        const updatedUser = await User.findById(req.user._id);
+
+        res.render("edit-profile", {
+            user: updatedUser,
+            success: "✅ Profile updated successfully!",
+            error: null
+        });
+
+    } catch (error) {
+        console.error("❌ Error updating full profile:", error);
+        res.redirect('/profile');
     }
 };

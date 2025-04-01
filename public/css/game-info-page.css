@@ -1,0 +1,138 @@
+/* 🎮 Game Page Layout */
+.game-container {
+    text-align: center;
+    max-width: 850px; /* ✅ Adjusted size */
+    margin: auto;
+    background: transparent;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: none;
+}
+
+/* ✅ Back Button + Title (Stacked Layout) */
+.game-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    margin-bottom: 10px;
+}
+
+/* ✅ Back Button */
+.back-btn {
+    position: absolute;
+    top: 20px;
+    left: 30px;
+    background: #f5a425;
+    color: #16213e;
+    padding: 8px 14px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 1rem;
+    cursor: pointer;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s ease-in-out, background 0.3s ease;
+}
+
+.back-btn:hover {
+    background: #ffcc29;
+    transform: scale(1.05);
+}
+
+/* ✅ Game Title (Centered & Bigger) */
+.game-title {
+    font-size: 3rem; /* 🔥 Bigger title */
+    font-weight: bold;
+    color: #f5a425;
+    text-align: center;
+    margin-top: 30px; /* ✅ More spacing below back button */
+}
+
+/* ✅ Game Image */
+.game-image-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.game-image {
+    width: 90%;
+    max-height: 350px;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+/* ✅ Game Description */
+.game-description {
+    text-align: middle;
+    padding: 15px;
+    font-size: 1.1rem;
+    line-height: 1.6;
+}
+
+/* ✅ Game Video */
+.game-video {
+    margin-top: 20px;
+}
+
+.game-video iframe {
+    width: 100%;
+    height: 600px;
+    border-radius: 10px;
+    box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.3);
+}
+
+/* ✅ Black Background for Rating Box */
+.game-rating {
+    background: transparent;
+    color: #fff;
+    padding: 15px;
+    margin-top: 20px;
+    border-radius: 10px;
+    text-align: center;
+    display: inline-block;
+}
+
+.game-rating select {
+    background: #222;
+    color: #fff;
+    border: none;
+    padding: 5px;
+    border-radius: 5px;
+}
+
+.game-rating button {
+    background: #f5a425;
+    color: #000;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+.game-rating button:hover {
+    background: #ffcc29;
+}
+
+/* ✅ Steam Buy Button */
+.btn-buy {
+    display: inline-block;
+    background: #f5a425;
+    color: #16213e;
+    padding: 10px 15px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: transform 0.2s ease-in-out, background 0.3s ease;
+    margin-top: 15px;
+}
+
+.btn-buy:hover {
+    background: #ffcc29;
+    transform: scale(1.05);
+}

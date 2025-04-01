@@ -1,80 +1,74 @@
-<!-- ✅ Include the head section -->
 <%- include('partials/head') %>
 
 <body>
-    <!-- ✅ Include the navigation bar -->
-    <%- include('partials/navbar') %>
+<%- include('partials/navbar') %>
 
-    <!-- ✅ Profile container -->
-    <div class="profile-container">
-        <% if (user) { %>
-            <!-- ✅ Display user profile details -->
-            <h2>👤 Your Profile</h2>
+<div class="profile-wrapper">
+    <!-- 👤 פרטי משתמש עיקריים -->
+    <div class="profile-header">
+        <div class="profile-image-container">
             <img src="<%= user.profilePicture || '/images/default-profile.png' %>" class="profile-picture">
-            <h3><%= user.username %></h3>
-            <p><%= user.email %></p>
+        </div>
 
-            <!-- 🔹 Update Profile Forms -->
-            <form action="/profile/update-photo" method="POST">
-                <input type="url" name="photoUrl" placeholder="🔗 Link to a Profile Picture" required>
-                <button type="submit">Update Photo</button>
-            </form>
+        <div class="profile-details">
+            <h2><%= user.username %>'s Profile</h2>
+            <p><strong>⭐ Favorite Genre:</strong> <%= user.favoriteGenre || "Not provided" %></p>
+            <a href="/profile/edit" class="edit-profile-btn">✏️ Edit Profile</a>
+        </div>
 
-            <form action="/profile/update-info" method="POST">
-                <input type="text" name="username" placeholder="✏️ New Username" required>
-                <button type="submit">Update Username</button>
-            </form>
-
-            <form action="/profile/update-password" method="POST">
-                <input type="password" name="password" placeholder="🔑 New Password" required>
-                <button type="submit">Update Password</button>
-            </form>
-
-            <!-- 🎮 Last Visited Games Section -->
-            <div class="recent-games">
-                <h4>🎮 Last Viewed Games</h4>
-                <ul>
-                    <% if (user.recentGames && user.recentGames.length > 0) { %>
-                        <% user.recentGames.forEach(game => { %>
-                            <li class="game-item">
-                                <a href="/games/game-info/<%= game.id %>">
-                                    <img src="<%= game.image %>" class="game-image">
-                                    <span><%= game.name %></span>
-                                </a>
-                            </li>
-                        <% }); %>
-                    <% } else { %>
-                        <li>🔍 No last viewed games</li>
-                    <% } %>
-                </ul>
-            </div>
-
-            <!-- ⭐ User Ratings Section -->
-            <div class="ratings-container">
-                <h4>⭐ Your Ratings</h4>
-                <ul>
-                    <% if (ratings && ratings.length > 0) { %>
-                        <% ratings.forEach(rating => { %>
-                            <li class="rating-item">
-                                🎮 <strong>Game:</strong> <%= rating.gameName || "Unknown Game" %> | ⭐ Rating: <%= rating.rating %>
-                                <form action="/profile/remove-rating" method="POST">
-                                    <input type="hidden" name="ratingId" value="<%= rating._id %>">
-                                    <button type="submit" class="delete-btn">🗑️ Delete</button>
-                                </form>
-                            </li>
-                        <% }); %>
-                    <% } else { %>
-                        <li>🔍 You haven't rated any games yet</li>
-                    <% } %>
-                </ul>
-            </div>
-        <% } else { %>
-            <!-- ✅ If user is not logged in -->
-            <p>🔒 You must be logged in to view your profile <a href="/login">Login</a></p>
-        <% } %>
+        <div class="future-box">
+            <h4>🔮 Coming Soon</h4>
+        </div>
     </div>
 
-    <!-- ✅ Include the footer section -->
-    <%- include('partials/footer') %>
+    <div class="profile-content">
+        <!-- 🎮 משחקים אחרונים -->
+        <div class="profile-showcase">
+            <h3>🎮 Last Viewed Games</h3>
+            <% if (user.recentGames && user.recentGames.length > 0) { %>
+                <ul class="showcase-list">
+                    <% user.recentGames.forEach(game => { %>
+                        <li>
+                            <a href="/games/game-info/<%= game.rawgId %>">
+                                <img src="<%= game.image %>" alt="Game">
+                            </a>
+                        </li>
+                    <% }); %>
+                </ul>
+            <% } else { %>
+                <p>No recently viewed games</p>
+            <% } %>
+
+            <!-- ⭐ דירוגים -->
+            <div class="top-ratings">
+                <h3>⭐ Top Ratings</h3>
+                <ul>
+                    <% ratings.slice(0, 5).forEach(rating => { %>
+                        <li><strong><%= rating.gameName %>:</strong> ⭐ <%= rating.rating %></li>
+                    <% }); %>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 📋 סיידבר -->
+        <div class="profile-sidebar">
+            <ul>
+                <li><a href="/profile/ratings">All Ratings</a></li>
+                <li><a href="/profile/comments">All Comments</a></li>
+                <li class="empty-link"></li>
+                <li class="empty-link"></li>
+                <li class="empty-link"></li>
+                <li class="empty-link"></li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- 💬 תגובות -->
+    <div class="profile-comments">
+        <h3>💬 Comments from other users</h3>
+        <p>🚧 Feature coming soon!</p>
+    </div>
+</div>
+
+<%- include('partials/footer') %>
 </body>
-</html>

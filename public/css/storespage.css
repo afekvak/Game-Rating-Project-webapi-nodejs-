@@ -1,0 +1,19 @@
+.store-list {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.store-list p {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.store-list a {
+    display: block;
+    margin-bottom: 20px; /* ✅ Added spacing between store buttons */
+}
+
+.btn-back {
+    margin-top: 30px; /* ✅ Extra space below last store button */
+}

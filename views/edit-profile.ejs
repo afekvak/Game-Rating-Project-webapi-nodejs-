@@ -1,0 +1,91 @@
+<%- include('partials/head') %>
+<body>
+<%- include('partials/navbar') %>
+
+<div class="edit-profile-wrapper styled-box">
+
+    <!-- 🔹 Sidebar -->
+    <div class="edit-sidebar styled-box-inner">
+        <ul>
+            <li class="active" onclick="showSection(event, 'personal')">👤 Personal Info</li>
+            <li onclick="showSection(event, 'appearance')">🎨 Appearance</li>
+            <li onclick="showSection(event, 'ratings')">⭐ Ratings</li>
+            <li onclick="showSection(event, 'security')">🔒 Security</li>
+        </ul>
+    </div>
+
+    <!-- 🔹 Main Content -->
+    <div class="edit-main-content styled-box-inner">
+        <h2 class="edit-title">🛠️ Edit Profile</h2>
+
+        <!-- ✅ Section: Personal Info -->
+        <div id="section-personal" class="edit-section active">
+            <!-- ✅ תמונה -->
+            <form id="photoForm" action="/profile/update-photo" method="POST" enctype="multipart/form-data">
+                <div class="profile-image-edit">
+                    <img src="<%= user.profilePicture %>" alt="Profile Picture">
+                    <label for="upload-photo"><i class="fas fa-pencil-alt"></i></label>
+                    <input type="file" id="upload-photo" name="photo" accept="image/*" style="display:none;">
+                </div>
+            </form>
+
+            <!-- ✅ הודעות -->
+            <% if (error) { %>
+                <p class="error-message"><%= error %></p>
+            <% } %>
+            <% if (success) { %>
+                <p class="success-message"><%= success %></p>
+            <% } %>
+
+            <!-- ✅ טופס עריכה -->
+            <form action="/profile/edit" method="POST" class="edit-form">
+                <input type="text" name="username" value="<%= user.username || '' %>" placeholder="Username" required>
+                <input type="text" name="fullName" value="<%= user.fullName || '' %>" placeholder="Full Name" required>
+                <input type="date" name="birthday" value="<%= user.birthday ? new Date(user.birthday).toISOString().split('T')[0] : '' %>">
+                <input type="text" name="phone" value="<%= user.phone || '' %>" placeholder="Phone (only digits)">
+                <input type="text" name="favoriteGenre" value="<%= user.favoriteGenre || '' %>" placeholder="Favorite Genre">
+
+                <div class="button-group">
+                    <button type="submit" class="btn save">💾 Save Changes</button>
+                    <a href="/profile" class="btn back">⬅️ Back to Profile</a>
+                </div>
+            </form>
+        </div>
+
+        <!-- ✅ Section: Appearance -->
+        <div id="section-appearance" class="edit-section">
+            <p>🚧 Appearance editing coming soon</p>
+        </div>
+
+        <!-- ✅ Section: Ratings -->
+        <div id="section-ratings" class="edit-section">
+            <p>🚧 Ratings overview coming soon</p>
+        </div>
+
+        <!-- ✅ Section: Security -->
+        <div id="section-security" class="edit-section">
+            <p>🚧 Security settings coming soon</p>
+        </div>
+    </div>
+</div>
+
+<%- include('partials/footer') %>
+
+<script>
+    function showSection(event, sectionId) {
+        document.querySelectorAll('.edit-section').forEach(div => div.classList.remove('active'));
+        document.getElementById('section-' + sectionId).classList.add('active');
+
+        document.querySelectorAll('.edit-sidebar li').forEach(li => li.classList.remove('active'));
+        event.target.classList.add('active');
+    }
+
+    document.getElementById('upload-photo')?.addEventListener('change', function () {
+        if (this.files.length > 0) {
+            document.getElementById('photoForm').submit();
+        }
+    });
+</script>
+
+</body>
+</html>

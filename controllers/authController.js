@@ -13,47 +13,69 @@ const { sendVerificationEmail, sendWelcomeEmail } = require("../services/emailSe
  */
 exports.register = async (req, res) => {
     try {
-        const { username, email, password } = req.body; // ✅ קבלת הנתונים מהטופס
+        const { username, fullName, phone, birthday, favoriteGenre, email, password } = req.body;
 
-        // ✅ בדיקה אם המשתמש כבר קיים
+        // ✅ Email check
         let user = await User.findOne({ email });
         if (user) {
             return res.status(400).render("register", { error: "❌ User already exists!", user: null });
         }
 
-        // ✅ הצפנת הסיסמה
+        // ✅ Password validation
+        const passwordRegex = /^(?=.*[A-Z])(?=.*\d).{6,}$/;
+        if (!passwordRegex.test(password)) {
+            return res.status(400).render("register", {
+                error: "❌ Password must have at least 6 characters, one uppercase letter, and one number.",
+                user: null
+            });
+        }
+
+        // ✅ Phone validation
+        const phoneRegex = /^[0-9]{9,12}$/;
+        if (!phoneRegex.test(phone)) {
+            return res.status(400).render("register", {
+                error: "❌ Please enter a valid phone number.",
+                user: null
+            });
+        }
+
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        // ✅ יצירת משתמש חדש ושמירתו במסד הנתונים
-        user = new User({ 
-            username, 
-            email, 
-            password: hashedPassword, 
+        user = new User({
+            username,
+            fullName,
+            phone,
+            birthday,
+            favoriteGenre,
+            email,
+            password: hashedPassword,
             emailVerified: false
         });
 
-        await user.save(); // ✅ שומרים את המשתמש לפני שמשתמשים ב- `_id`
+        await user.save();
 
-        // ✅ עכשיו יוצרים את ה- Token (אחרי שהמשתמש נשמר ויש לו _id)
         const verificationToken = jwt.sign(
             { userId: user._id, email: user.email },
             process.env.JWT_SECRET,
             { expiresIn: "1h" }
         );
 
-        // ✅ עדכון ה- Token במסד הנתונים
         user.token = verificationToken;
         await user.save();
 
-        // ✅ שליחת מייל אימות
         sendVerificationEmail(user.email, verificationToken);
 
-        console.log("✅ User registered. Token saved & verification email sent.");
-        res.render("register", { error: "📧 Please check your email to verify your account!", user: null });
+        res.render("register", {
+            error: "📧 Please check your email to verify your account!",
+            user: null
+        });
 
     } catch (error) {
         console.error("❌ Error in register:", error);
-        res.status(500).render("register", { error: "❌ Server error. Try again.", user: null });
+        res.status(500).render("register", {
+            error: "❌ Server error. Try again.",
+            user: null
+        });
     }
 };
 
