@@ -20,10 +20,29 @@
                 <div class="game-card">
                     <img src="<%= game.image %>" alt="<%= game.name %>">
                     <h3><%= game.name %></h3>
-                    <a href="/games/game-info/<%= game.id %>" class="btn">📜 פרטים נוספים</a>
+        
+                    <!-- ✅ Reason for recommendation -->
+                    <% if (game.reason) { %>
+                        <p class="recommendation-reason">🤖 <%= game.reason %></p>
+                    <% } %>
+        
+                    <!-- ✅ Extra debug info -->
+                    <p class="game-meta">
+                        🎮 Genre: <strong><%= game.genre || 'Unknown' %></strong><br>
+                        ⏱️ Playtime: <strong>
+                            <% if (game.playtime && game.playtime > 0) { %>
+                                <%= game.playtime %>h
+                            <% } else { %>
+                                N/A
+                            <% } %>
+                        </strong>
+                    </p>
+        
+                    <a href="/games/game-info/<%= game.id %>" class="btn">📜 Game Details</a>
                 </div>
             <% }) %>
         </div>
+        
     </div>
 
     <!-- ✅ Include the footer section -->

@@ -1,0 +1,36 @@
+<%- include('partials/head') %>
+<%- include('partials/navbar') %>
+
+<div class="recommendation-page">
+  <h2>💬 AI-Based Recommendations From Your Reviews</h2>
+
+  <% if (aiMessage) { %>
+    <p class="ai-message"><%= aiMessage %></p>
+  <% } %>
+
+  <% if (recommendations.length === 0) { %>
+    <p class="no-recs">No recommendations available yet. Write reviews to get started!</p>
+  <% } else { %>
+    <div class="recommendations-gallery2">
+      <% recommendations.forEach(game => { %>
+        <div class="game-card">
+          <img src="<%= game.image %>" alt="<%= game.name %>">
+          <h3><%= game.name %></h3>
+          
+          <% if (game.reason) { %>
+            <p class="recommendation-reason"><%= game.reason %></p>
+          <% } %>
+
+          <p class="game-meta">
+            🎮 Genre: <%= game.genre || 'N/A' %> <br>
+            ⏱️ Playtime: <%= game.playtime ? game.playtime + 'h' : 'N/A' %>
+          </p>
+
+          <a href="/games/game-info/<%= game.id %>" class="btn">📜 Game Details</a>
+        </div>
+      <% }) %>
+    </div>
+  <% } %>
+</div>
+
+<%- include('partials/footer') %>

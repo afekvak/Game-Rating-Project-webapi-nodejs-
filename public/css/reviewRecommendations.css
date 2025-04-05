@@ -12,7 +12,7 @@
 }
 
 /* 🎮 Recommendations Gallery */
-.recommendations-gallery {
+.recommendations-gallery2 {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* ✅ 4-column responsive grid */
     gap: 20px;
@@ -56,19 +56,35 @@
 
 /* ✅ Responsive Grid Behavior */
 @media (max-width: 1024px) {
-    .recommendations-gallery {
+    .recommendations-gallery2 {
         grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Adjusts to 3 columns */
     }
 }
 
 @media (max-width: 768px) {
-    .recommendations-gallery {
+    .recommendations-gallery2 {
         grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); /* Adjusts to 2 columns */
     }
 }
 
 @media (max-width: 500px) {
-    .recommendations-gallery {
+    .recommendations-gallery2 {
         grid-template-columns: repeat(auto-fit, minmax(100%, 1fr)); /* Stacks in 1 column */
     }
 }
+
+
+.recommendation-reason {
+    margin-top: 8px;
+    font-size: 0.95rem;
+    color: #ccc;
+    font-style: italic;
+}
+
+.game-meta {
+    color: #ccc;
+    font-size: 0.9rem;
+    margin: 6px 0 12px;
+    line-height: 1.4;
+}
+

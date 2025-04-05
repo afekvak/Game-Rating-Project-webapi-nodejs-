@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="he">
+
+<%- include('partials/head') %>
+
+<body>
+  <%- include('partials/navbar') %>
+
+  <div class="recommendation-menu">
+    <h2>📈 Personalized Game Recommendations</h2>
+    <p>Choose how you'd like to get your next game suggestions:</p>
+
+    <div class="recommendation-buttons">
+      <a href="/recommendations/quick" class="rec-btn">🧠 Quick Recommendations</a>
+      <a href="/recommendations/reviews" class="rec-btn">💬 Based on Your Reviews</a>
+      <a href="/recommendations/genre" class="rec-btn">🎮 Favorite Genre</a>
+      <a href="/recommendations/discover" class="rec-btn">🔍 Discover from Ratings</a>
+    </div>
+  </div>
+
+  <!-- 🔥 גרף הז'אנרים -->
+  <div class="genre-graph-container">
+    <h3>🎯 Your Top Rated Genres</h3>
+    <canvas id="genreChart" width="400" height="200"></canvas>
+  </div>
+
+  <%- include('partials/footer') %>
+  <div id="genreData" data-json='<%= JSON.stringify(genreData || []) %>'></div>
+   <!-- ✅ Chart.js CDN -->
+   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- שמור את המידע בדאטה אטריביוט -->
+
+
+<script>
+  const raw = document.getElementById('genreData').dataset.json;
+  const genreData = JSON.parse(raw);
+
+  if (genreData.length > 0) {
+    const genreLabels = genreData.map(g => g.genre);
+    const avgRatings = genreData.map(g => parseFloat(g.avgRating));
+
+    const ctx = document.getElementById('genreChart').getContext('2d');
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: genreLabels,
+        datasets: [{
+          label: 'Average Rating',
+          data: avgRatings,
+          backgroundColor: 'rgba(255, 165, 0, 0.7)',
+          borderColor: 'orange',
+          borderWidth: 1
+        }]
+      },
+      options: {
+        scales: {
+          y: {
+            beginAtZero: true,
+            max: 5
+          }
+        }
+      }
+    });
+  }
+</script>
+
+</body>
+</html>

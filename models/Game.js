@@ -6,6 +6,7 @@ const gameSchema = new mongoose.Schema({
     image: { type: String, default: "/images/no-image.jpg" },
     genre: { type: String },
     description: { type: String, default: "No description available." },
+    playtime: { type: Number, default: null },
 
     // ✅ 🎥 Videos
     trailer: { type: String, default: null },

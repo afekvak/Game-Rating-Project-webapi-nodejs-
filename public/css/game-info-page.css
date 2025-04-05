@@ -86,53 +86,135 @@
     box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.3);
 }
 
-/* ✅ Black Background for Rating Box */
+
+
+
+
+
+
+
+
+
+
+/*  Rating Box */
+/* 🔲 תיבת דירוג כללית */
 .game-rating {
-    background: transparent;
+    background: rgba(255, 255, 255, 0.05);
     color: #fff;
-    padding: 15px;
-    margin-top: 20px;
-    border-radius: 10px;
+    padding: 20px;
+    margin-top: 30px;
+    border-radius: 12px;
     text-align: center;
     display: inline-block;
+    box-shadow: 0 0 10px rgba(0,0,0,0.3);
+    width: 100%;
+    max-width: 500px;
 }
 
-.game-rating select {
+/* 🔢 שדה שעות משחק + ביקורת */
+.game-rating input[type="number"],
+.game-rating textarea {
+    width: 90%;
+    padding: 10px;
+    margin: 10px auto;
     background: #222;
     color: #fff;
-    border: none;
-    padding: 5px;
-    border-radius: 5px;
+    border: 1px solid #555;
+    border-radius: 6px;
+    display: block;
+    font-family: inherit;
 }
 
-.game-rating button {
+.game-rating textarea {
+    resize: vertical;
+}
+
+/* 🏷️ תוויות */
+.game-rating label {
+    display: block;
+    margin-top: 15px;
+    font-weight: bold;
+    font-size: 1rem;
+    text-align: center;
+    direction: rtl;
+}
+
+/* 💾 כפתור שליחה */
+.game-rating .btn {
     background: #f5a425;
     color: #000;
     border: none;
-    padding: 8px 12px;
-    border-radius: 5px;
+    padding: 10px 16px;
+    border-radius: 6px;
     cursor: pointer;
-    margin-left: 10px;
+    margin-top: 15px;
+    font-weight: bold;
+    transition: background 0.3s;
 }
 
-.game-rating button:hover {
+.game-rating .btn:hover {
     background: #ffcc29;
 }
 
-/* ✅ Steam Buy Button */
-.btn-buy {
+/* ⭐ דירוג כוכבים */
+.rating-stars {
+    direction: ltr;
+    font-size: 3rem;
+    display: inline-flex;
+    user-select: none;
+    gap: 5px;
+  }
+  
+  .rating-stars .star {
+    position: relative;
     display: inline-block;
+    color: #444;
+    cursor: pointer;
+  }
+  
+  .rating-stars .star::before {
+    content: '★';
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 0%;
+    color: #FFD700;
+    overflow: hidden;
+    transition: width 0.2s ease-in-out;
+    z-index: 1;
+  }
+  
+  .rating-stars .star.full::before {
+    width: 100%;
+  }
+  
+  .rating-stars .star.half::before {
+    width: 50%;
+  }
+  
+
+
+
+
+
+
+
+
+
+
+/*  Buy Button */
+.btn-buy {
     background: #f5a425;
-    color: #16213e;
-    padding: 10px 15px;
-    border-radius: 8px;
-    text-decoration: none;
-    font-weight: bold;
-    transition: transform 0.2s ease-in-out, background 0.3s ease;
+    color: #000;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 6px;
+    cursor: pointer;
     margin-top: 15px;
+    font-weight: bold;
+    transition: background 0.3s;
 }
 
 .btn-buy:hover {
     background: #ffcc29;
-    transform: scale(1.05);
 }

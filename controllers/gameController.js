@@ -178,7 +178,9 @@ exports.getGameInfo = async (gameId, userId) => {
                 trailer: trailer || null,
                 gameplay: gameplay || null,
                 stores: storeLinks.length > 0 ? storeLinks : [],
+                playtime: gameData.playtime || null // ✅ הוספה חשובה!
             });
+            
 
             await game.save();
             console.log(`✅ Game saved in database: ${game.name}`);

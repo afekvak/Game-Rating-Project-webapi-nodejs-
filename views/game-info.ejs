@@ -64,41 +64,38 @@
             <% } %>
 
             <!-- ✅ Game Rating Section -->
+            
             <div class="game-rating">
                 <form id="ratingForm">
-                    <label for="rating">🌟 Rate the game:</label>
-                    <select id="rating" name="rating">
-                        <option value="1">⭐</option>
-                        <option value="2">⭐⭐</option>
-                        <option value="3">⭐⭐⭐</option>
-                        <option value="4">⭐⭐⭐⭐</option>
-                        <option value="5">⭐⭐⭐⭐⭐</option>
-                    </select>
-                    <button type="submit" class="btn">💾 Save Rating</button>
+            
+                    <!-- 🌟 דירוג -->
+                    <label for="ratingInput">Rate this game 🌟</label>
+                    <div class="rating-stars" id="starRating">
+                        <span class="star" data-index="0">&#9733;</span>
+                        <span class="star" data-index="1">&#9733;</span>
+                        <span class="star" data-index="2">&#9733;</span>
+                        <span class="star" data-index="3">&#9733;</span>
+                        <span class="star" data-index="4">&#9733;</span>
+                        <input type="hidden" id="ratingInput" name="rating" required>
+                    </div>
+                      
+                      
+                      
+            
+                    <!-- ⏱️ שעות משחק -->
+                    <label for="playedHours">How many Hours did you spend on this game?⏱️</label>
+                    <input type="number" id="playedHours" name="playedHours" placeholder="Example : 10" class="input" min="0" required>
+            
+                    <!-- 📝 חוות דעת -->
+                    <label for="review">Write A Review📝</label>
+                    <textarea id="review" name="review" class="input" rows="4" placeholder="Say something you liked about this game.." required></textarea>
+            
+                    <!-- 💾 כפתור שליחה -->
+                    <button type="submit" class="btn">Save Rating💾</button>
+            
                 </form>
             </div>
-
-            <!-- ✅ JavaScript to handle rating submission -->
-            <script>
-                document.getElementById("ratingForm").addEventListener("submit", async (e) => {
-                    e.preventDefault(); // ✅ Prevent form from refreshing the page
-                    const rating = document.getElementById("rating").value; // ✅ Get selected rating value
             
-                    // ✅ Send rating data to the server
-                    const response = await fetch("/ratings/submit", {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json"
-                        },
-                        body: JSON.stringify({ gameId: "<%= game.rawgId %>", rating }) // ✅ FIXED: use rawgId instead of game.id
-                    });
-            
-                    const data = await response.json(); // ✅ Convert response to JSON
-                    alert(data.message); // ✅ Show success or error message
-                });
-            </script>
-            
-
             <% if (game.stores) { %>
                 <!-- ✅ Button to check where to buy the game -->
                 <p><a href="/games/<%= game.id %>/stores" class="btn btn-buy">🛒 Purchase Links</a></p>
@@ -110,6 +107,11 @@
     <!-- ✅ Include the footer section -->
     <%- include('partials/footer') %>
 
+    <script>
+        const GAME_ID = "<%= game.rawgId %>";
+      </script>
+      <script src="/js/gamerating.js" defer></script>
+      
 </body>
 
 </html>
