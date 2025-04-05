@@ -14,7 +14,7 @@ const router = express.Router(); // ✅ Create a new Express router
 router.get('/', authMiddleware, renderProfile); // Route to view profile
 // router.post('/update-photo', authMiddleware, updateProfilePhoto); // Route to update profile picture
 // router.post('/update-info', authMiddleware, updateUserInfo); // Route to update user information
-// router.post('/update-password', authMiddleware, updatePassword); // Route to update password
+router.post('/update-password', authMiddleware, updatePassword); // Route to update password
 router.post('/remove-rating', authMiddleware, removeRating); // Route to remove a rating
 
 router.post('/update-photo', authMiddleware, upload.single('photo'), updateProfilePhoto);

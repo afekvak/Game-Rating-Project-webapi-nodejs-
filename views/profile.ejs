@@ -38,17 +38,22 @@
             <% } else { %>
                 <p>No recently viewed games</p>
             <% } %>
-
+        
             <!-- ⭐ דירוגים -->
             <div class="top-ratings">
-                <h3>⭐ Top Ratings</h3>
-                <ul>
-                    <% ratings.slice(0, 5).forEach(rating => { %>
-                        <li><strong><%= rating.gameName %>:</strong> ⭐ <%= rating.rating %></li>
-                    <% }); %>
-                </ul>
+                <h3>⭐ Top Ratings by <%= user.username %></h3>
+                <% if (ratings && ratings.length > 0) { %>
+                    <ul>
+                        <% ratings.slice(0, 5).forEach(rating => { %>
+                            <li><strong><%= rating.gameName %>:</strong> ⭐ <%= rating.rating %></li>
+                        <% }); %>
+                    </ul>
+                <% } else { %>
+                    <p>You haven't rated any games yet</p>
+                <% } %>
             </div>
         </div>
+        
 
         <!-- 📋 סיידבר -->
         <div class="profile-sidebar">

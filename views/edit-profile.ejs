@@ -2,9 +2,9 @@
 <body>
 <%- include('partials/navbar') %>
 
-<div class="edit-profile-wrapper styled-box">
+<div class="edit-profile-wrapper styled-box" data-section="<%= section || 'personal' %>">
 
-    <!-- 🔹 Sidebar -->
+    <!-- Sidebar -->
     <div class="edit-sidebar styled-box-inner">
         <ul>
             <li class="active" onclick="showSection(event, 'personal')">👤 Personal Info</li>
@@ -12,15 +12,18 @@
             <li onclick="showSection(event, 'ratings')">⭐ Ratings</li>
             <li onclick="showSection(event, 'security')">🔒 Security</li>
         </ul>
+        <div class="sidebar-footer">
+            <a href="/profile" class="btn back full-width">⬅️ Back to Profile</a>
+        </div>
+        
     </div>
 
-    <!-- 🔹 Main Content -->
+    <!-- Main Content -->
     <div class="edit-main-content styled-box-inner">
         <h2 class="edit-title">🛠️ Edit Profile</h2>
 
-        <!-- ✅ Section: Personal Info -->
+        <!-- Section: Personal Info -->
         <div id="section-personal" class="edit-section active">
-            <!-- ✅ תמונה -->
             <form id="photoForm" action="/profile/update-photo" method="POST" enctype="multipart/form-data">
                 <div class="profile-image-edit">
                     <img src="<%= user.profilePicture %>" alt="Profile Picture">
@@ -29,63 +32,75 @@
                 </div>
             </form>
 
-            <!-- ✅ הודעות -->
-            <% if (error) { %>
-                <p class="error-message"><%= error %></p>
-            <% } %>
-            <% if (success) { %>
-                <p class="success-message"><%= success %></p>
-            <% } %>
-
-            <!-- ✅ טופס עריכה -->
-            <form action="/profile/edit" method="POST" class="edit-form">
+            <form id="personalForm" action="/profile/edit" method="POST" class="edit-form">
                 <input type="text" name="username" value="<%= user.username || '' %>" placeholder="Username" required>
                 <input type="text" name="fullName" value="<%= user.fullName || '' %>" placeholder="Full Name" required>
                 <input type="date" name="birthday" value="<%= user.birthday ? new Date(user.birthday).toISOString().split('T')[0] : '' %>">
                 <input type="text" name="phone" value="<%= user.phone || '' %>" placeholder="Phone (only digits)">
                 <input type="text" name="favoriteGenre" value="<%= user.favoriteGenre || '' %>" placeholder="Favorite Genre">
-
                 <div class="button-group">
-                    <button type="submit" class="btn save">💾 Save Changes</button>
-                    <a href="/profile" class="btn back">⬅️ Back to Profile</a>
+                    <button type="button" class="btn save" onclick="confirmPersonalSave()">💾 Save Changes</button>
+                    
                 </div>
             </form>
         </div>
 
-        <!-- ✅ Section: Appearance -->
+        <!-- Section: Appearance -->
         <div id="section-appearance" class="edit-section">
             <p>🚧 Appearance editing coming soon</p>
         </div>
 
-        <!-- ✅ Section: Ratings -->
+        <!-- Section: Ratings -->
         <div id="section-ratings" class="edit-section">
-            <p>🚧 Ratings overview coming soon</p>
+            <h3>⭐ Edit Your Ratings</h3>
+            <% if (ratings && ratings.length > 0) { %>
+                <ul class="ratings-list">
+                    <% ratings.forEach(rating => { %>
+                        <li>
+                            <img src="<%= rating.gameImage || '/images/no-image.jpg' %>" class="rating-game-image" />
+                            <div class="rating-info">
+                                <strong><%= rating.gameName %></strong><br>⭐ <%= rating.rating %>
+                            </div>
+                            <form action="/profile/remove-rating" method="POST" onsubmit="return confirmDeleteRating(event)">
+                                <input type="hidden" name="ratingId" value="<%= rating._id %>">
+                                <button type="submit" class="delete-btn">🗑️ Delete</button>
+                            </form>
+                        </li>
+                    <% }); %>
+                </ul>
+            <% } else { %>
+                <p>🔍 You haven't rated any games yet</p>
+            <% } %>
         </div>
 
-        <!-- ✅ Section: Security -->
+        <!-- Section: Security -->
         <div id="section-security" class="edit-section">
-            <p>🚧 Security settings coming soon</p>
+            <h3>🔒 Change Your Password</h3>
+            <form action="/profile/update-password" method="POST" class="security-form">
+                <input type="password" name="password" id="passwordInput" placeholder="Enter new password" required>
+                <div id="passwordStrength" class="password-strength">Password strength: <span>—</span></div>
+
+                <% if (passwordError) { %>
+                    <p class="error-message"><%= passwordError %></p>
+                <% } %>
+                <% if (passwordSuccess) { %>
+                    <p class="success-message"><%= passwordSuccess %></p>
+                <% } %>
+
+                <div class="button-group">
+                    <button type="submit" class="btn save" onclick="return confirmPasswordSave(event)">🔄 Change Password</button>
+
+                </div>
+            </form>
         </div>
     </div>
 </div>
 
 <%- include('partials/footer') %>
 
-<script>
-    function showSection(event, sectionId) {
-        document.querySelectorAll('.edit-section').forEach(div => div.classList.remove('active'));
-        document.getElementById('section-' + sectionId).classList.add('active');
+<script src="/js/editprofile.js"></script>
 
-        document.querySelectorAll('.edit-sidebar li').forEach(li => li.classList.remove('active'));
-        event.target.classList.add('active');
-    }
-
-    document.getElementById('upload-photo')?.addEventListener('change', function () {
-        if (this.files.length > 0) {
-            document.getElementById('photoForm').submit();
-        }
-    });
-</script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 </body>
 </html>

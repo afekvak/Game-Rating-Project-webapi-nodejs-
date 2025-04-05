@@ -3,10 +3,35 @@
     max-width: 900px;
     margin: 40px auto;
     background: #1e1e2f;
+    border: 1px solid #2b2b2b;
     border-radius: 10px;
     overflow: hidden;
     box-shadow: 0 0 15px #00000050;
+    min-height: 71vh;
+
 }
+
+
+/* ✅ Make button go full width and nice spacing */
+.sidebar-footer {
+    margin-top: auto;
+    padding-top: 20px;
+}
+
+.sidebar-footer .btn.back {
+    background: #f5a425;
+    color: #16213e;
+    padding: 10px 20px;
+    border-radius: 8px;
+    border: none;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+.sidebar-footer .btn.back :hover {
+    background: #ffc74b;
+}
+
 
 .styled-box-inner {
     background: #1b1b1b;
@@ -16,6 +41,9 @@
 
 .edit-sidebar {
     width: 200px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
 .edit-sidebar ul {
@@ -68,7 +96,7 @@
     height: 130px;
     border-radius: 50%;
     object-fit: cover;
-    border: 3px solid #f5a425;
+    
 }
 
 .profile-image-edit label {
@@ -114,19 +142,7 @@
     background: #ffc74b;
 }
 
-.btn.back {
-    background: #00acee;
-    color: white;
-    padding: 10px 20px;
-    border-radius: 8px;
-    text-decoration: none;
-    font-weight: bold;
-    transition: background 0.3s;
-}
 
-.btn.back:hover {
-    background: #00bfff;
-}
 
 .error-message,
 .success-message {
@@ -156,3 +172,145 @@
     display: block;
   }
   
+
+
+
+
+
+/*  rating section styles */
+.ratings-list {
+    list-style: none;
+    padding: 0;
+    margin-top: 15px;
+}
+
+.ratings-list li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #1e1e2f;
+    border: 1px solid #333;
+    padding: 10px;
+    border-radius: 6px;
+    margin-bottom: 10px;
+    gap: 15px;
+}
+
+.rating-game-image {
+    width: 60px;
+    height: 60px;
+    border-radius: 8px;
+    object-fit: cover;
+    border: 2px solid #f5a425;
+}
+
+.rating-info {
+    flex-grow: 1;
+    color: #eee;
+}
+
+.delete-btn {
+    background: #f54242;
+    color: #fff;
+    border: none;
+    padding: 6px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.delete-btn:hover {
+    background: #ff6b6b;
+}
+
+
+
+
+
+/*  security section styles */
+/* 🔒 Security Section Container */
+#section-security {
+    background-color: #1f1f2e;
+    padding: 30px;
+    border-radius: 10px;
+    border: 1px solid #2e2e3e;
+    box-shadow: 0 0 10px rgba(0, 255, 255, 0.05);
+}
+
+/* 🔑 Section Title */
+#section-security h3 {
+    color: #fff;
+    margin-bottom: 20px;
+    font-size: 22px;
+    border-bottom: 1px solid #444;
+    padding-bottom: 10px;
+}
+
+/* 🧷 Password Input */
+#section-security input[type="password"] {
+    width: 100%;
+    padding: 12px;
+    font-size: 1rem;
+    border-radius: 6px;
+    border: none;
+    margin-bottom: 15px;
+    background-color: #2c2c3e;
+    color: #fff;
+}
+
+/* 💾 Save Button */
+#section-security button {
+    background: #f5a425;
+    color: #16213e;
+    padding: 10px 20px;
+    border-radius: 8px;
+    border: none;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+#section-security button:hover {
+    background-color: #ffc74b;
+}
+
+/* 💬 Password Strength Message */
+.password-strength {
+    margin-top: 10px;
+    font-weight: bold;
+    font-size: 0.9rem;
+    color: #ccc;
+    transition: color 0.3s ease;
+}
+
+.password-strength.weak span {
+    color: #ff4d4d;
+}
+
+.password-strength.medium span {
+    color: #ffcc00;
+}
+
+.password-strength.strong span {
+    color: #5eff9e;
+}
+
+/* ✅ Messages */
+#section-security .error-message,
+#section-security .success-message {
+    margin-top: 15px;
+    padding: 10px;
+    border-radius: 6px;
+    text-align: center;
+    font-weight: bold;
+}
+
+#section-security .error-message {
+    background-color: #6d2e2e;
+    color: #fff;
+}
+
+#section-security .success-message {
+    background-color: #2e6d3f;
+    color: #fff;
+}
