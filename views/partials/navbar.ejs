@@ -18,6 +18,8 @@
     <a href="https://discord.gg/VFtUbb9vKh" target="_blank" class="social-icon">
         <i class="fab fa-discord"></i>
     </a>
+    
+
 </div>
 
 
@@ -47,4 +49,21 @@
         <img src="/assets/logo.png" alt="AI Game Recommender">
     </div>
 
+    <script>
+        const toggleBtn = document.getElementById("themeToggle");
+      
+        // בדוק אם יש העדפה שמורה
+        const savedTheme = localStorage.getItem("theme") || "theme-dark";
+        document.body.classList.add(savedTheme);
+      
+        toggleBtn.addEventListener("click", () => {
+          const current = document.body.classList.contains("theme-dark") ? "theme-dark" : "theme-light";
+          const newTheme = current === "theme-dark" ? "theme-light" : "theme-dark";
+      
+          document.body.classList.remove(current);
+          document.body.classList.add(newTheme);
+          localStorage.setItem("theme", newTheme);
+        });
+      </script>
+      
 </nav>

@@ -4,34 +4,46 @@
 <!-- ✅ Include the head section -->
 <%- include('partials/head') %>
 
-<body>
-    <!-- ✅ Include the navigation bar -->
-    <%- include('partials/navbar') %>
+    <body>
+        <!-- ✅ Include the navigation bar -->
+        <%- include('partials/navbar') %>
 
-    <!-- ✅ Registration form container -->
-    <div class="register-container">
-        <h2>📜 Register</h2>
+            <!-- ✅ Registration form container -->
+            <div class="register-container">
+                <h2>📜 Register</h2>
 
-        <% if (typeof error !== "undefined" && error) { %>
-            <!-- ✅ Display error message if registration fails -->
-            <p class="error-message"><%= error %></p>
-        <% } %>
+                <% if (typeof error !=="undefined" && error) { %>
+                    <!-- ✅ Display error message if registration fails -->
+                    <p class="error-message">
+                        <%= error %>
+                    </p>
+                    <% } %>
 
-        <!-- ✅ Registration form -->
-        <form action="/auth/register" method="POST">
-            <input type="text" name="username" placeholder="👤 Username" required>
-            <input type="text" name="fullName" placeholder="📝 Full Name" required>
-            <input type="tel" name="phone" placeholder="📞 Phone Number" required>
-            <input type="date" name="birthday" placeholder="🎂 Birthday" required>
-            <input type="text" name="favoriteGenre" placeholder="🎮 Favorite Game Genre" required>
-            <input type="email" name="email" placeholder="📧 Email" required>
-            <input type="password" name="password" placeholder="🔑 Password" required>
-            <button type="submit" class="btn">✅ Register</button>
-        </form>
-        
-    </div>
+                        <!-- ✅ Registration form -->
+                        <form action="/auth/register" method="POST">
+                            <input type="text" name="username" placeholder="👤 Username" required>
+                            <input type="text" name="fullName" placeholder="📝 Full Name" required>
+                            <input type="tel" name="phone" placeholder="📞 Phone Number" required>
+                            <input type="date" name="birthday" placeholder="🎂 Birthday" required>
+                            <input type="text" name="favoriteGenre" placeholder="🎮 Favorite Game Genre" required>
+                            <input type="email" name="email" placeholder="📧 Email" required>
+                            <input type="password" name="password" placeholder="🔑 Password" required>
+                            <button type="submit" class="btn">✅ Register</button>
 
-    <!-- ✅ Include the footer section -->
-    <%- include('partials/footer') %>
-</body>
+
+                            <a href="/auth/google" class="google-btn">
+                                <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google Logo"
+                                    class="google-icon">
+                                Sign in with Google
+                            </a>
+
+
+                        </form>
+
+            </div>
+
+            <!-- ✅ Include the footer section -->
+            <%- include('partials/footer') %>
+    </body>
+
 </html>

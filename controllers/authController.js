@@ -1,4 +1,5 @@
 const bcrypt = require("bcryptjs"); // Library for hashing passwords
+const passport = require('passport');
 const jwt = require("jsonwebtoken"); // Library for generating and verifying JSON Web Tokens (JWT)
 const User = require("../models/User"); // Import the User model
 const { sendVerificationEmail, sendWelcomeEmail } = require("../services/emailService"); // ✅ Import email service
@@ -79,6 +80,41 @@ exports.register = async (req, res) => {
     }
 };
 
+exports.googleLogin = passport.authenticate('google', {
+    scope: ['profile', 'email']
+});
+
+/**
+ * Google login callback - runs after Google redirects back
+ * ✅ Must be middleware array: [passport.authenticate, custom logic]
+ */
+exports.googleCallback = [
+    passport.authenticate('google', { session: false, failureRedirect: '/login' }),
+    async (req, res) => {
+        try {
+            // ✅ Generate JWT
+            const token = jwt.sign(
+                { userId: req.user._id },
+                process.env.JWT_SECRET,
+                { expiresIn: '1h' }
+            );
+
+            // ✅ Send JWT as cookie
+            res.cookie('token', token, {
+                httpOnly: true,
+                secure: process.env.NODE_ENV === 'production',
+                sameSite: 'Lax',
+                maxAge: 7 * 24 * 60 * 60 * 1000
+            });
+
+            // ✅ Redirect to profile or home
+            res.redirect('/');
+        } catch (error) {
+            console.error('❌ Google callback error:', error);
+            res.status(500).send('שגיאה בתהליך התחברות עם גוגל');
+        }
+    }
+]; // currently callbacking to http://localhost:5000/auth/google/callback , change to domain in production
 
 
 /**

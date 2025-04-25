@@ -5,6 +5,10 @@ const dotenv = require('dotenv'); // Load environment variables from .env file
 const cors = require('cors'); // Enable Cross-Origin Resource Sharing (CORS)
 const cookieParser = require('cookie-parser'); // Parse cookies from incoming requests
 const jwt = require('jsonwebtoken'); // JSON Web Token (JWT) for authentication
+const passport = require('passport');
+require('./services/passport'); // ✅ זה חשוב מאוד – זה מה שטוען את GoogleStrategy
+
+
 
 // ✅ Import route handlers
 const recommendationRoutes = require('./routes/recommendationRoutes');

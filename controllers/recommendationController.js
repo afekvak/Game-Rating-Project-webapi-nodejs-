@@ -127,8 +127,8 @@ exports.getRecommendations = async (req, res) => {
                         }
 
                         // 🔁 נשתמש ב-getGameInfo כדי גם להביא וגם לשמור את המשחק
-                        // בתוך map(async (game) => { ... })
-                        // 🔁 נשתמש ב-getGameInfo כדי גם להביא וגם לשמור את המשחק
+                        
+                        
                         const fullGame = await getGameInfo(rawgGame.id);
 
                         // ✅ Create reason for recommendation

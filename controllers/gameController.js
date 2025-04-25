@@ -132,7 +132,7 @@ exports.getExploreGames = async (req, res) => {
 
 exports.getGameInfo = async (gameId, userId) => {
     try {
-        const rawgId = String(gameId); // ודא שה-id הוא מחרוזת
+        const rawgId = String(gameId); 
         console.log("📥 getGameInfo called with gameId:", rawgId, "| userId:", userId);
 
         // ✅ Try to find the game in DB
@@ -164,9 +164,9 @@ exports.getGameInfo = async (gameId, userId) => {
             });
 
             const storeLinks = storeResponse.data.results.map(store => ({
-                name: store.store?.name || "Unknown Store",
+                name: STORE_NAMES[store.store_id] || "Unknown Store",
                 url: store.url
-            }));
+              }));
 
             // ✅ Create new game and save
             game = new Game({
@@ -282,34 +282,53 @@ exports.renderGameInfo = async (req, res) => {
  */
 exports.getGameStores = async (req, res) => {
     try {
-        const { id } = req.params; // Extract game ID from URL
-
-        // ✅ Fetch game details (for the name)
-        const response = await axios.get(`https://api.rawg.io/api/games/${id}`, {
-            params: { key: process.env.RAWG_API_KEY }
+      const { id } = req.params;
+  
+      console.log("🔎 Requested store links for RAWG ID:", id);
+  
+      // 1. Try to get the game from DB first
+      let game = await Game.findOne({ rawgId: id });
+  
+      // 2. If not in DB – fetch from RAWG API
+      if (!game) {
+        console.log("📡 Game not found in DB, fetching from RAWG API...");
+  
+        const gameRes = await axios.get(`https://api.rawg.io/api/games/${id}`, {
+          params: { key: process.env.RAWG_API_KEY }
         });
-
-        const gameData = response.data; // Store game information
-
-        // ✅ Fetch available store links for the game
-        const storeResponse = await axios.get(`https://api.rawg.io/api/games/${id}/stores`, {
-            params: { key: process.env.RAWG_API_KEY }
-        });
-
-        // ✅ Extract store links and map store_id to human-readable names
-        const storeLinks = storeResponse.data.results.map(store => ({
-            name: STORE_NAMES[store.store_id] || "Unknown Store", // Convert store ID to store name
-            url: store.url // Store purchase link
-        }));
-
-        // ✅ Render the game-stores page with store data
-        res.render('game-stores', { game: { name: gameData.name, stores: storeLinks } });
-
+  
+        if (!gameRes.data || !gameRes.data.name) {
+          return res.status(404).send("Game not found.");
+        }
+  
+        game = {
+          name: gameRes.data.name
+        };
+      }
+  
+      // 3. Fetch store links
+      const storeRes = await axios.get(`https://api.rawg.io/api/games/${id}/stores`, {
+        params: { key: process.env.RAWG_API_KEY }
+      });
+  
+      const storeLinks = (storeRes.data.results || []).map(store => ({
+        name: STORE_NAMES[store.store_id] || "Unknown Store",
+        url: store.url
+      }));
+  
+      // 4. Render page with data
+      res.render('game-stores', {
+        game: {
+          name: game.name,
+          stores: storeLinks
+        }
+      });
+  
     } catch (error) {
-        console.error("❌ Error fetching store links:", error);
-        res.status(500).send("Error fetching store links");
+      console.error("❌ Error fetching store links:", error.message);
+      res.status(500).send("Error fetching store links.");
     }
-};
+  };
 
 /**
  * Fetches the most popular games from RAWG API.
@@ -369,4 +388,6 @@ exports.getTopRatedGames = async () => {
         return [];
     }
 };
+
+
 

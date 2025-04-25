@@ -50,7 +50,34 @@ h2 {
 }
 
 
-
+.google-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #fff;
+    color: #444;
+    border: 1px none #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+    font-weight: 500;
+    padding: 10px 16px;
+    text-decoration: none;
+    width: 100%;
+    transition: box-shadow 0.3s ease;
+  }
+  
+  .google-btn:hover {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    transform: scale(1.05);
+    text-decoration: none;
+    color: #000;
+  }
+  
+  .google-icon {
+    height: 20px;
+    margin-right: 12px;
+  }
+  
 
 
 

@@ -1,0 +1,97 @@
+:root {
+  --color-bg: #121212;
+  --color-text: #ffffff;
+  --color-accent: #f5a425;
+  --color-hover: #ffcc29;
+  --color-button-text: #000000;
+  --color-surface: #1e1e2f;
+  --color-border: #333;
+  --color-muted: #aaa;
+  --radius: 8px;
+  --transition: 0.3s ease-in-out;
+}
+
+body.theme-light {
+  --color-bg: #f5f5f5;
+  --color-text: #111;
+  --color-accent: #0077ff;
+  --color-hover: #3399ff;
+  --color-button-text: #ffffff;
+  --color-surface: #ffffff;
+  --color-border: #ddd;
+  --color-muted: #555;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Poppins', sans-serif;
+  background-color: var(--color-bg);
+  color: var(--color-text);
+}
+
+/* Containers */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* Buttons */
+.btn {
+  display: inline-block;
+  background-color: var(--color-accent);
+  color: var(--color-button-text);
+  padding: 10px 18px;
+  border-radius: var(--radius);
+  text-decoration: none;
+  font-weight: bold;
+  transition: background-color var(--transition), transform var(--transition);
+}
+
+.btn:hover {
+  background-color: var(--color-hover);
+  transform: scale(1.05);
+}
+
+/* Text */
+h1, h2, h3 {
+  color: var(--color-accent);
+  text-align: center;
+}
+
+/* Grid Layouts */
+.grid {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.grid-2 { grid-template-columns: repeat(2, 1fr); }
+.grid-3 { grid-template-columns: repeat(3, 1fr); }
+.grid-4 { grid-template-columns: repeat(4, 1fr); }
+
+/* Cards and Surfaces */
+.card {
+  background-color: var(--color-surface);
+  border-radius: var(--radius);
+  padding: 15px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--color-border);
+}
+
+/* Images */
+img {
+  max-width: 100%;
+  display: block;
+  border-radius: var(--radius);
+}
+
+/* Muted Text */
+.text-muted {
+  color: var(--color-muted);
+}
+
+/* Borders */
+hr {
+  border: 1px solid var(--color-border);
+}
